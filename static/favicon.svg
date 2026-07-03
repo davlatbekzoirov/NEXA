@@ -1,0 +1,40 @@
+<svg width="900" height="320" viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="nodeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#8B5CF6"/>
+    </linearGradient>
+    <linearGradient id="hubGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818CF8"/>
+      <stop offset="100%" stop-color="#A78BFA"/>
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Icon group: hub with 4 connecting nodes representing the 4 apps -->
+  <g transform="translate(160,160)">
+    <!-- connecting lines -->
+    <line x1="0" y1="0" x2="0" y2="-78" stroke="#C4B5FD" stroke-width="6" stroke-linecap="round"/>
+    <line x1="0" y1="0" x2="78" y2="0" stroke="#C4B5FD" stroke-width="6" stroke-linecap="round"/>
+    <line x1="0" y1="0" x2="0" y2="78" stroke="#C4B5FD" stroke-width="6" stroke-linecap="round"/>
+    <line x1="0" y1="0" x2="-78" y2="0" stroke="#C4B5FD" stroke-width="6" stroke-linecap="round"/>
+
+    <!-- 4 outer nodes: Study, Money, Campus Life, Applications -->
+    <rect x="-24" y="-116" width="48" height="48" rx="14" fill="url(#nodeGrad)"/>
+    <rect x="72" y="-24" width="48" height="48" rx="14" fill="url(#nodeGrad)"/>
+    <rect x="-24" y="68" width="48" height="48" rx="14" fill="url(#nodeGrad)"/>
+    <rect x="-120" y="-24" width="48" height="48" rx="14" fill="url(#nodeGrad)"/>
+
+    <!-- central hub -->
+    <circle cx="0" cy="0" r="46" fill="url(#hubGrad)"/>
+    <circle cx="0" cy="0" r="46" fill="none" stroke="#FFFFFF" stroke-width="3" opacity="0.5"/>
+    <text x="0" y="10" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="30" fill="#FFFFFF" text-anchor="middle">N</text>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="330" y="185" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="96" letter-spacing="4" fill="url(#textGrad)">NEXA</text>
+  <text x="333" y="220" font-family="Arial, Helvetica, sans-serif" font-weight="500" font-size="22" letter-spacing="3" fill="#6B7280">YOUR STUDENT LIFE, CONNECTED</text>
+</svg>

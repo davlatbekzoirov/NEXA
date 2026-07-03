@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Help · NEXA{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">Help &amp; FAQ</h1>
+</div>
+
+<div class="card">
+  <div class="faq-item">
+    <div class="faq-q">Do I need one account for every module?</div>
+    <div class="faq-a">Yes — a single sign-up gives you access to your grades, budget, involvement log, and application tracker under one profile.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">How does the study scheduler pick my time blocks?</div>
+    <div class="faq-a">It distributes an assignment's estimated prep time across the days leading up to its due date, respecting the daily hours and time window you set on the Schedule page. Changing an assignment's due date or hours regenerates its blocks automatically.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">How is the spending runway calculated?</div>
+    <div class="faq-a">It measures your daily non-essential spending velocity over a trailing 14-day window and projects forward against your fixed costs and the semester end date.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Can I share a document with a counselor who doesn't have an account?</div>
+    <div class="faq-a">Yes — generate a secure, view-only reviewer link with a 1–30 day expiry from the Documents page. You can revoke it at any time.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Where do deadline reminder emails come from?</div>
+    <div class="faq-a">A scheduled job checks daily for deadlines 30, 14, and 7 days out and emails you automatically, skipping applications already marked Accepted or Rejected.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">I still need help.</div>
+    <div class="faq-a">Reach out from the <a href="{% url 'home:contact' %}">Contact</a> page and we'll get back to you.</div>
+  </div>
+</div>
+{% endblock %}

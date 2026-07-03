@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Features · NEXA{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">What's inside NEXA</h1>
+</div>
+
+<div class="stat-grid">
+  <div class="stat">
+    <div class="stat-label">Academics</div>
+    <div class="stat-value" style="font-size:20px;">SmartStudy</div>
+    <div class="stat-sub">Grades, scheduler, Pomodoro, burnout alerts</div>
+  </div>
+  <div class="stat stat-teal">
+    <div class="stat-label">Living</div>
+    <div class="stat-value" style="font-size:20px;">CampusCribs</div>
+    <div class="stat-sub">Budget runway, shared bills, chores, apartments</div>
+  </div>
+  <div class="stat stat-amber">
+    <div class="stat-label">Involvement</div>
+    <div class="stat-value" style="font-size:20px;">CampusPulse</div>
+    <div class="stat-sub">Clubs, volunteer hours, resume bullets</div>
+  </div>
+  <div class="stat stat-purple">
+    <div class="stat-label">Applications</div>
+    <div class="stat-value" style="font-size:20px;">UniTracker</div>
+    <div class="stat-sub">Deadlines, documents, scores, scholarships</div>
+  </div>
+</div>
+
+<div class="card prose">
+  <h2>SmartStudy</h2>
+  <p>Weighted grade tracking per course, a What-If calculator, a Target Grade solver, an automatic study block scheduler, a Pomodoro timer tied to your courses, and burnout alerts when you've been overdoing it.</p>
+
+  <h2>CampusCribs</h2>
+  <p>A predictive spending-runway calculator that warns you before rent money runs out, a greedy debt-simplification algorithm for splitting bills with roommates, and a chore tracker with photo proof.</p>
+
+  <h2>CampusPulse</h2>
+  <p>Track club roles from member to president, log volunteer hours toward Bronze through Platinum tiers, and auto-generate resume bullets in the Google X-Y-Z format from your own impact journal.</p>
+
+  <h2>UniTracker</h2>
+  <p>Manage every application with Reach/Match/Safety labeling, dynamic admissions-odds estimates, document versioning with secure reviewer share links, test score validation, and automated deadline emails.</p>
+</div>
+{% endblock %}
