@@ -28,17 +28,67 @@
   </div>
 </div>
 
-<div class="card prose">
-  <h2>SmartStudy</h2>
-  <p>Weighted grade tracking per course, a What-If calculator, a Target Grade solver, an automatic study block scheduler, a Pomodoro timer tied to your courses, and burnout alerts when you've been overdoing it.</p>
+<div class="module-grid">
+  <div class="module-card">
+    <span class="badge badge-accepted">Academics</span>
+    <h3>SmartStudy</h3>
+    <p>Everything that turns a syllabus into a plan you actually follow.</p>
+    <ul class="feature-list">
+      <li>Weighted grade tracking per course</li>
+      <li>What-If calculator for hypothetical scores</li>
+      <li>Target Grade solver — back-solves what you need on what's left</li>
+      <li>Automatic study block scheduler</li>
+      <li>Pomodoro timer tied to your courses</li>
+      <li>Burnout alerts when you've been overdoing it</li>
+    </ul>
+  </div>
 
-  <h2>CampusCribs</h2>
-  <p>A predictive spending-runway calculator that warns you before rent money runs out, a greedy debt-simplification algorithm for splitting bills with roommates, and a chore tracker with photo proof.</p>
+  <div class="module-card">
+    <span class="badge badge-interview">Living</span>
+    <h3>CampusCribs</h3>
+    <p>The money and the apartment, tracked with the same rigor as your GPA.</p>
+    <ul class="feature-list">
+      <li>Predictive spending-runway calculator — warns you before rent money runs out</li>
+      <li>Greedy debt-simplification algorithm for splitting bills with roommates</li>
+      <li>Off-campus housing comparisons for lease decisions</li>
+      <li>Chore tracker with photo proof</li>
+    </ul>
+  </div>
 
-  <h2>CampusPulse</h2>
-  <p>Track club roles from member to president, log volunteer hours toward Bronze through Platinum tiers, and auto-generate resume bullets in the Google X-Y-Z format from your own impact journal.</p>
+  <div class="module-card">
+    <span class="badge badge-reach">Involvement</span>
+    <h3>CampusPulse</h3>
+    <p>Every hour and every role, logged the moment it happens.</p>
+    <ul class="feature-list">
+      <li>Club and event calendar</li>
+      <li>Track club roles from member to president</li>
+      <li>Volunteer hour logging toward Bronze through Platinum tiers</li>
+      <li>Auto-generated resume bullets in Google X-Y-Z format from your impact journal</li>
+    </ul>
+  </div>
 
-  <h2>UniTracker</h2>
-  <p>Manage every application with Reach/Match/Safety labeling, dynamic admissions-odds estimates, document versioning with secure reviewer share links, test score validation, and automated deadline emails.</p>
+  <div class="module-card">
+    <span class="badge badge-submitted">Applications</span>
+    <h3>UniTracker</h3>
+    <p>Every application managed like a real pipeline, not a hopeful spreadsheet.</p>
+    <ul class="feature-list">
+      <li>Reach / Match / Safety labeling</li>
+      <li>Dynamic admissions-odds estimates</li>
+      <li>Document versioning with secure reviewer share links</li>
+      <li>Test score validation</li>
+      <li>Automated deadline emails</li>
+    </ul>
+  </div>
+</div>
+
+<div class="cta-banner">
+  <div>
+    <h3>Ready to see your own ledger?</h3>
+    <p>Every module works on its own — open the one you need first.</p>
+  </div>
+  <div class="cta-actions">
+    <a href="{% url 'home:about' %}" class="btn btn-outline">Why NEXA</a>
+    <a href="{% url 'register' %}" class="btn btn-primary">Create free account</a>
+  </div>
 </div>
 {% endblock %}
