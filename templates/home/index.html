@@ -2,127 +2,130 @@
 {% block title %}NEXA — Your student life, connected{% endblock %}
 {% block content %}
 <style>
-  /* ─── Page-local additions, built on base.html's tokens ─── */
-  .hero {
+  /* ─── Page-local additions, built on base.html's tokens ───
+     Namespaced with `home-` so nothing here collides with the
+     shared .hero / .module-grid / .section-heading / .cta-banner
+     classes defined globally in base.html. */
+  .home-hero {
     text-align: center;
     padding: 3.5rem 1rem 3rem;
     position: relative;
   }
-  .hero-eyebrow {
+  .home-hero-eyebrow {
     display: inline-flex; align-items: center; gap: 8px;
     font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em;
     text-transform: uppercase; color: var(--brass);
     border: 1px dashed var(--brass-line); border-radius: 999px;
     padding: 5px 14px; margin-bottom: 1.25rem;
   }
-  .hero-eyebrow::before { content: '§'; font-family: var(--font-display); }
-  .hero h1 {
+  .home-hero-eyebrow::before { content: '§'; font-family: var(--font-display); }
+  .home-hero h1 {
     font-family: var(--font-display); font-weight: 600;
     font-size: clamp(32px, 5vw, 48px); letter-spacing: -.02em;
     color: var(--ink); line-height: 1.08; max-width: 700px; margin: 0 auto;
   }
-  .hero p {
+  .home-hero p {
     max-width: 520px; margin: 1.1rem auto 0; color: var(--text-dim);
     font-size: 16px; line-height: 1.65;
   }
-  .hero-rule {
+  .home-hero-rule {
     width: 64px; height: 2px; background: var(--brass); margin: 1.75rem auto 0;
     position: relative;
   }
-  .hero-rule::before, .hero-rule::after {
+  .home-hero-rule::before, .home-hero-rule::after {
     content: ''; position: absolute; top: 50%; width: 4px; height: 4px;
     border-radius: 50%; background: var(--brass); transform: translateY(-50%);
   }
-  .hero-rule::before { left: -10px; } .hero-rule::after { right: -10px; }
+  .home-hero-rule::before { left: -10px; } .home-hero-rule::after { right: -10px; }
 
   /* Section framing */
-  .section { margin-top: 3.5rem; }
-  .section-head { margin-bottom: 1.5rem; text-align: center; }
-  .section-kicker {
+  .home-section { margin-top: 3.5rem; }
+  .home-section-head { margin-bottom: 1.5rem; text-align: center; }
+  .home-section-kicker {
     font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .1em;
     text-transform: uppercase; color: var(--text-faint); margin-bottom: 6px;
   }
-  .section-title {
+  .home-section-title {
     font-family: var(--font-display); font-size: 24px; font-weight: 600;
     color: var(--ink); letter-spacing: -.01em;
   }
-  .section-sub { color: var(--text-dim); font-size: 14.5px; margin-top: 6px; max-width: 460px; margin-left: auto; margin-right: auto; }
+  .home-section-sub { color: var(--text-dim); font-size: 14.5px; margin-top: 6px; max-width: 460px; margin-left: auto; margin-right: auto; }
 
   /* Module dossier cards */
-  .module-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
-  .module-card {
+  .home-module-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .home-module-card {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--radius-lg); padding: 1.25rem 1.25rem 1.4rem;
     border-top: 3px solid var(--brass);
     display: flex; flex-direction: column; gap: .6rem;
     transition: border-color .15s, transform .15s;
   }
-  .module-card:hover { transform: translateY(-2px); border-color: var(--border-strong); }
-  .module-card.mc-teal   { border-top-color: var(--ink-green); }
-  .module-card.mc-amber  { border-top-color: var(--ink-amber); }
-  .module-card.mc-purple { border-top-color: var(--ink-indigo); }
-  .module-tag {
+  .home-module-card:hover { transform: translateY(-2px); border-color: var(--border-strong); }
+  .home-module-card.mc-teal   { border-top-color: var(--ink-green); }
+  .home-module-card.mc-amber  { border-top-color: var(--ink-amber); }
+  .home-module-card.mc-purple { border-top-color: var(--ink-indigo); }
+  .home-module-tag {
     font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em;
     text-transform: uppercase; color: var(--text-faint);
   }
-  .module-card h3 {
+  .home-module-card h3 {
     font-family: var(--font-display); font-size: 19px; font-weight: 600; color: var(--ink);
   }
-  .module-card p { color: var(--text-dim); font-size: 13.5px; line-height: 1.55; flex-grow: 1; }
-  .module-list { list-style: none; display: flex; flex-direction: column; gap: 5px; margin-top: 2px; }
-  .module-list li {
+  .home-module-card p { color: var(--text-dim); font-size: 13.5px; line-height: 1.55; flex-grow: 1; }
+  .home-module-list { list-style: none; display: flex; flex-direction: column; gap: 5px; margin-top: 2px; }
+  .home-module-list li {
     font-size: 12.5px; color: var(--text); display: flex; align-items: baseline; gap: 7px;
   }
-  .module-list li::before { content: '—'; color: var(--brass); flex-shrink: 0; }
+  .home-module-list li::before { content: '—'; color: var(--brass); flex-shrink: 0; }
 
   /* Process ledger */
-  .process { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-  .process-step {
+  .home-process { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .home-process-step {
     padding: 1.5rem 1.35rem; background: var(--surface);
     border-right: 1px solid var(--border);
     position: relative;
   }
-  .process-step:last-child { border-right: none; }
-  .process-num {
+  .home-process-step:last-child { border-right: none; }
+  .home-process-num {
     font-family: var(--font-mono); font-size: 11px; color: var(--brass);
     border: 1px solid var(--brass-line); border-radius: 50%;
     width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
     margin-bottom: .85rem;
   }
-  .process-step h4 { font-family: var(--font-display); font-size: 16px; color: var(--ink); margin-bottom: .4rem; }
-  .process-step p { font-size: 13px; color: var(--text-dim); line-height: 1.55; }
+  .home-process-step h4 { font-family: var(--font-display); font-size: 16px; color: var(--ink); margin-bottom: .4rem; }
+  .home-process-step p { font-size: 13px; color: var(--text-dim); line-height: 1.55; }
 
   /* Ledger comparison */
-  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .compare-col { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.4rem; }
-  .compare-col.is-after { border-color: var(--brass-line); background: linear-gradient(180deg, var(--brass-soft), transparent 40%), var(--surface); }
-  .compare-head { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .07em; margin-bottom: .9rem; display: flex; align-items: center; gap: 7px; }
-  .compare-col:not(.is-after) .compare-head { color: var(--text-faint); }
-  .compare-col.is-after .compare-head { color: var(--brass); }
-  .compare-col ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
-  .compare-col li { font-size: 13.5px; color: var(--text-dim); display: flex; gap: 9px; line-height: 1.5; }
-  .compare-col:not(.is-after) li::before { content: '×'; color: var(--ink-rose); font-weight: 600; }
-  .compare-col.is-after li { color: var(--text); }
-  .compare-col.is-after li::before { content: '✓'; color: var(--ink-green); font-weight: 600; }
+  .home-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .home-compare-col { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.4rem; }
+  .home-compare-col.is-after { border-color: var(--brass-line); background: linear-gradient(180deg, var(--brass-soft), transparent 40%), var(--surface); }
+  .home-compare-head { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .07em; margin-bottom: .9rem; display: flex; align-items: center; gap: 7px; }
+  .home-compare-col:not(.is-after) .home-compare-head { color: var(--text-faint); }
+  .home-compare-col.is-after .home-compare-head { color: var(--brass); }
+  .home-compare-col ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .home-compare-col li { font-size: 13.5px; color: var(--text-dim); display: flex; gap: 9px; line-height: 1.5; }
+  .home-compare-col:not(.is-after) li::before { content: '×'; color: var(--ink-rose); font-weight: 600; }
+  .home-compare-col.is-after li { color: var(--text); }
+  .home-compare-col.is-after li::before { content: '✓'; color: var(--ink-green); font-weight: 600; }
 
   /* Closing CTA */
-  .cta-band {
+  .home-cta-band {
     text-align: center; padding: 2.5rem 1.5rem; margin-top: 3.5rem;
     border: 1px dashed var(--brass-line); border-radius: var(--radius-lg);
     background: var(--brass-soft);
   }
-  .cta-band h2 { font-family: var(--font-display); font-size: 22px; color: var(--ink); margin-bottom: .5rem; }
-  .cta-band p { color: var(--text-dim); font-size: 14px; margin-bottom: 1.25rem; }
+  .home-cta-band h2 { font-family: var(--font-display); font-size: 22px; color: var(--ink); margin-bottom: .5rem; }
+  .home-cta-band p { color: var(--text-dim); font-size: 14px; margin-bottom: 1.25rem; }
 
   @media (max-width: 640px) {
-    .compare { grid-template-columns: 1fr; }
-    .process-step { border-right: none; border-bottom: 1px solid var(--border); }
-    .process-step:last-child { border-bottom: none; }
+    .home-compare { grid-template-columns: 1fr; }
+    .home-process-step { border-right: none; border-bottom: 1px solid var(--border); }
+    .home-process-step:last-child { border-bottom: none; }
   }
 </style>
 
-<div class="hero">
-  <span class="hero-eyebrow">The student operating system</span>
+<div class="home-hero">
+  <span class="home-hero-eyebrow">The student operating system</span>
   <h1>Your student life, connected.</h1>
   <p>Grades, money, campus involvement, and applications — one dashboard instead of five different tabs.</p>
   <div style="margin-top:1.75rem; display:flex; gap:10px; justify-content:center;">
@@ -133,46 +136,46 @@
       <a href="{% url 'home:features' %}" class="btn btn-outline">See features</a>
     {% endif %}
   </div>
-  <div class="hero-rule"></div>
+  <div class="home-hero-rule"></div>
 </div>
 
-<div class="section">
-  <div class="module-grid">
-    <div class="module-card">
-      <span class="module-tag">Academics</span>
+<div class="home-section">
+  <div class="home-module-grid">
+    <div class="home-module-card">
+      <span class="home-module-tag">Academics</span>
       <h3>Study</h3>
       <p>Keep every class where you can actually see it, and let the grade math do itself.</p>
-      <ul class="module-list">
+      <ul class="home-module-list">
         <li>Live grade tracker with what-if scoring</li>
         <li>Class scheduler with conflict checks</li>
         <li>Built-in Pomodoro focus timer</li>
       </ul>
     </div>
-    <div class="module-card mc-teal">
-      <span class="module-tag">Living</span>
+    <div class="home-module-card mc-teal">
+      <span class="home-module-tag">Living</span>
       <h3>Living</h3>
       <p>Budget, bills, and chores in one place, so nothing quietly slips past due.</p>
-      <ul class="module-list">
+      <ul class="home-module-list">
         <li>Monthly budget with spend categories</li>
         <li>Shared bill splitting for roommates</li>
         <li>Recurring chore rotation</li>
       </ul>
     </div>
-    <div class="module-card mc-amber">
-      <span class="module-tag">Involvement</span>
+    <div class="home-module-card mc-amber">
+      <span class="home-module-tag">Involvement</span>
       <h3>Pulse</h3>
       <p>Every club meeting, volunteer hour, and win logged where your resume can find it later.</p>
-      <ul class="module-list">
+      <ul class="home-module-list">
         <li>Club and event calendar</li>
         <li>Volunteer hour logging</li>
         <li>Auto-building resume bullets</li>
       </ul>
     </div>
-    <div class="module-card mc-purple">
-      <span class="module-tag">Applications</span>
+    <div class="home-module-card mc-purple">
+      <span class="home-module-tag">Applications</span>
       <h3>Apply</h3>
       <p>Track every deadline, document, and score for internships, jobs, or grad school.</p>
-      <ul class="module-list">
+      <ul class="home-module-list">
         <li>Deadline countdown with urgency flags</li>
         <li>Document checklist per application</li>
         <li>Reach / match / safety tagging</li>
@@ -181,15 +184,15 @@
   </div>
 </div>
 
-<div class="section">
-  <div class="section-head">
-    <div class="section-kicker">The record</div>
-    <div class="section-title">One ledger, not five logins</div>
-    <p class="section-sub">The same information already exists — it's just scattered. NEXA gives it a single home.</p>
+<div class="home-section">
+  <div class="home-section-head">
+    <div class="home-section-kicker">The record</div>
+    <div class="home-section-title">One ledger, not five logins</div>
+    <p class="home-section-sub">The same information already exists — it's just scattered. NEXA gives it a single home.</p>
   </div>
-  <div class="compare">
-    <div class="compare-col">
-      <div class="compare-head">Without NEXA</div>
+  <div class="home-compare">
+    <div class="home-compare-col">
+      <div class="home-compare-head">Without NEXA</div>
       <ul>
         <li>A grade portal, a budgeting app, and a spreadsheet for applications</li>
         <li>Deadlines tracked in three different calendars, or none</li>
@@ -197,8 +200,8 @@
         <li>Roommate bills settled from memory</li>
       </ul>
     </div>
-    <div class="compare-col is-after">
-      <div class="compare-head">With NEXA</div>
+    <div class="home-compare-col is-after">
+      <div class="home-compare-head">With NEXA</div>
       <ul>
         <li>Grades, budget, and applications on one dashboard</li>
         <li>Every deadline in a single countdown, flagged by urgency</li>
@@ -209,24 +212,24 @@
   </div>
 </div>
 
-<div class="section">
-  <div class="section-head">
-    <div class="section-kicker">Getting set up</div>
-    <div class="section-title">Three steps to your first entry</div>
+<div class="home-section">
+  <div class="home-section-head">
+    <div class="home-section-kicker">Getting set up</div>
+    <div class="home-section-title">Three steps to your first entry</div>
   </div>
-  <div class="process">
-    <div class="process-step">
-      <div class="process-num">1</div>
+  <div class="home-process">
+    <div class="home-process-step">
+      <div class="home-process-num">1</div>
       <h4>Create your account</h4>
       <p>Sign up with your school email — no verification hoops, just a username and password.</p>
     </div>
-    <div class="process-step">
-      <div class="process-num">2</div>
+    <div class="home-process-step">
+      <div class="home-process-num">2</div>
       <h4>Open a module</h4>
       <p>Start with Study, Living, Pulse, or Apply. Add the others whenever you need them.</p>
     </div>
-    <div class="process-step">
-      <div class="process-num">3</div>
+    <div class="home-process-step">
+      <div class="home-process-num">3</div>
       <h4>Let the ledger catch up</h4>
       <p>Log a class, a bill, or a deadline once, and NEXA keeps the running total from there.</p>
     </div>
@@ -234,7 +237,7 @@
 </div>
 
 {% if not user.is_authenticated %}
-<div class="cta-band">
+<div class="home-cta-band">
   <h2>Start your record today</h2>
   <p>Free for students. No credit card, no catch.</p>
   <a href="{% url 'register' %}" class="btn btn-primary">Sign up</a>

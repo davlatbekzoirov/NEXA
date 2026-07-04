@@ -2,25 +2,95 @@
 {% block title %}Contact · NEXA{% endblock %}
 {% block content %}
 <div class="page-header">
-  <h1 class="page-title">Contact us</h1>
+  <h1 class="page-title">Get in touch</h1>
 </div>
 
-<div class="card" style="max-width:520px;">
-  <form method="post">
-    {% csrf_token %}
-    <div class="form-group">
-      <label for="id_name">Name</label>
-      <input type="text" id="id_name" name="name" required>
-    </div>
-    <div class="form-group">
-      <label for="id_email">Email</label>
-      <input type="email" id="id_email" name="email" required>
-    </div>
-    <div class="form-group">
-      <label for="id_message">Message</label>
-      <textarea id="id_message" name="message" rows="5" required></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary">Send message</button>
-  </form>
+<div class="stat-grid">
+  <div class="stat">
+    <div class="stat-label">Typical response</div>
+    <div class="stat-value" style="font-size:26px;">&lt; 1 day</div>
+    <div class="stat-sub">on weekdays</div>
+  </div>
+  <div class="stat stat-teal">
+    <div class="stat-label">Bug reports</div>
+    <div class="stat-value" style="font-size:20px;">Priority</div>
+    <div class="stat-sub">routed straight to engineering</div>
+  </div>
+  <div class="stat stat-amber">
+    <div class="stat-label">Common questions</div>
+    <div class="stat-value" style="font-size:20px;">Check Help</div>
+    <div class="stat-sub">may already be answered</div>
+  </div>
 </div>
+
+<div class="contact-grid">
+  <div class="card">
+    <form method="post" action="" id="contact-form">
+      {% csrf_token %}
+      <div class="form-row">
+        <div class="form-group">
+          <label for="id_name">Name</label>
+          <input type="text" id="id_name" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="id_email">Email</label>
+          <input type="email" id="id_email" name="email" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="id_subject">What's this about</label>
+        <select id="id_subject" name="subject" required>
+          <option value="" disabled selected>Choose one</option>
+          <option value="general">General question</option>
+          <option value="bug">Something's broken</option>
+          <option value="billing">Billing</option>
+          <option value="partnership">Campus partnership</option>
+          <option value="other">Something else</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="id_message">Message</label>
+        <textarea id="id_message" name="message" rows="6" maxlength="1000" required></textarea>
+        <div class="char-count" id="char-count">0 / 1000</div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Send message</button>
+    </form>
+  </div>
+
+  <div class="contact-side">
+    <div class="card">
+      <h3>Before you write in</h3>
+      <p>A few of the most common questions are already answered on the Help page — worth a quick look first.</p>
+      <ul class="contact-links">
+        <li><a href="{% url 'home:help' %}">How is the spending runway calculated?</a></li>
+        <li><a href="{% url 'home:help' %}">Can I share a document with a counselor?</a></li>
+        <li><a href="{% url 'home:help' %}">View all FAQs →</a></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Direct lines</h3>
+      <p>General &amp; billing<br><a href="mailto:hello@nexa.app">hello@nexa.app</a></p>
+      <p>Bugs &amp; technical issues<br><a href="mailto:support@nexa.app">support@nexa.app</a></p>
+      <p>Campus &amp; partnership inquiries<br><a href="mailto:partners@nexa.app">partners@nexa.app</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var textarea = document.getElementById('id_message');
+  var counter = document.getElementById('char-count');
+  var limit = 1000;
+
+  textarea.addEventListener('input', function () {
+    var len = this.value.length;
+    counter.textContent = len + ' / ' + limit;
+    counter.classList.toggle('is-near-limit', len > limit * 0.9);
+  });
+})();
+</script>
 {% endblock %}
