@@ -1,0 +1,286 @@
+{% extends 'applications/application_base.html' %}
+{% block title %}Dashboard · NEXA{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1 class="page-title">Dashboard</h1>
+  <div style="display:flex;gap:8px">
+    <a href="#" class="btn btn-outline btn-sm">&#9906; Filter</a>
+    <a href="{% url 'universities:university_create' %}" class="btn btn-primary btn-sm">+ Add application</a>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat stat-purple">
+    <div class="stat-label">Total apps</div>
+    <div class="stat-value">{{ stats.total }}</div>
+    <div class="stat-sub">{{ stats.reach }} reach · {{ stats.match }} match · {{ stats.safety }} safety</div>
+  </div>
+  <div class="stat stat-teal">
+    <div class="stat-label">Interviews</div>
+    <div class="stat-value">{{ stats.interview }}</div>
+    <div class="stat-sub">active</div>
+  </div>
+  <div class="stat stat-amber">
+    <div class="stat-label">Deadlines</div>
+    <div class="stat-value">{{ stats.due_soon }}</div>
+    <div class="stat-sub">within 30 days</div>
+  </div>
+  <div class="stat stat-blue">
+    <div class="stat-label">Submitted</div>
+    <div class="stat-value">{{ stats.submitted }}</div>
+    <div class="stat-sub">of {{ stats.total }} total</div>
+  </div>
+  <div class="stat" style="background:linear-gradient(135deg,#639922,#3B6D11)">
+    <div class="stat-label">Accepted</div>
+    <div class="stat-value">{{ stats.accepted }}</div>
+    <div class="stat-sub">offers received</div>
+  </div>
+</div>
+
+<!-- Recent applications -->
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+    <span style="font-size:15px;font-weight:600;color:#e8e6f0">Recent applications</span>
+    <a href="{% url 'universities:university_list' %}" class="btn btn-outline btn-sm">View all</a>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>University</th>
+          <th>Programme</th>
+          <th>Deadline</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for uni in upcoming %}
+        <tr>
+          <td>
+            <div style="font-weight:600;font-size:14px">
+              <a href="{% url 'universities:university_detail' uni.pk %}" style="color:#e8e6f0">{{ uni.name }}</a>
+            </div>
+            <div style="font-size:12px;color:#666;margin-top:2px">{{ uni.country }} · <span class="badge badge-{{ uni.tier|lower }}">{{ uni.tier }}</span></div>
+          </td>
+          <td style="color:#bbb;font-size:14px">{{ uni.program }}</td>
+          <td>
+            {% if uni.days_until_deadline is not None %}
+              {% if uni.days_until_deadline <= 7 %}
+                <span style="color:#f09595;font-weight:600;font-size:13px">{{ uni.days_until_deadline }} days</span>
+              {% elif uni.days_until_deadline <= 30 %}
+                <span style="color:#FAC775;font-size:13px">{{ uni.days_until_deadline }} days</span>
+              {% else %}
+                <span style="color:#666;font-size:13px">{{ uni.days_until_deadline }} days</span>
+              {% endif %}
+            {% else %}
+              <span style="color:#555;font-size:13px">—</span>
+            {% endif %}
+          </td>
+          <td><span class="badge badge-{{ uni.status|lower }}">{{ uni.get_status_display }}</span></td>
+          <td>
+            <div style="display:flex;gap:6px;justify-content:flex-end">
+              <a href="{% url 'universities:university_edit' uni.pk %}" class="btn btn-outline btn-sm" title="Edit">✏</a>
+              <form method="post" action="{% url 'universities:university_delete' uni.pk %}" style="display:inline" onsubmit="return confirm('Delete {{ uni.name }}?')">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm" title="Delete">🗑</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="text-align:center;padding:2.5rem;color:#555">
+            <div style="font-size:28px;margin-bottom:.5rem">📭</div>
+            <div style="font-size:14px">No applications yet. <a href="{% url 'universities:university_create' %}">Add one</a></div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Score summary -->
+{% if scores %}
+<div style="margin-top:1.5rem">
+  <h2 style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#555;margin-bottom:.875rem">Test scores</h2>
+  <div class="card">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.5rem">
+      {% if scores.sat_total %}
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:6px">
+          <span style="font-weight:600;color:#e8e6f0">SAT</span>
+          <span style="color:#9C97E8;font-weight:700;font-size:15px">{{ scores.sat_total }} <span style="font-size:12px;font-weight:400;color:#555">/ 1600</span></span>
+        </div>
+        <div class="score-bar"><div class="score-fill" style="width:{% widthratio scores.sat_total 1600 100 %}%"></div></div>
+      </div>
+      {% endif %}
+      {% if scores.ielts_overall %}
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:6px">
+          <span style="font-weight:600;color:#e8e6f0">IELTS</span>
+          <span style="color:#1D9E75;font-weight:700;font-size:15px">{{ scores.ielts_overall }} <span style="font-size:12px;font-weight:400;color:#555">/ 9.0</span></span>
+        </div>
+        <div class="score-bar"><div class="score-fill score-fill-green" style="width:{% widthratio scores.ielts_overall 9 100 %}%"></div></div>
+      </div>
+      {% endif %}
+      {% if scores.toefl_total %}
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:6px">
+          <span style="font-weight:600;color:#e8e6f0">TOEFL</span>
+          <span style="color:#378ADD;font-weight:700;font-size:15px">{{ scores.toefl_total }} <span style="font-size:12px;font-weight:400;color:#555">/ 120</span></span>
+        </div>
+        <div class="score-bar"><div class="score-fill score-fill-blue" style="width:{% widthratio scores.toefl_total 120 100 %}%"></div></div>
+      </div>
+      {% endif %}
+    </div>
+    <a href="{% url 'universities:scores' %}" class="btn btn-outline btn-sm" style="margin-top:1rem">Edit scores</a>
+  </div>
+</div>
+{% endif %}
+<!-- ===== Analytics Section ===== -->
+<div style="margin-top:1.5rem">
+  <h2 style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#555;margin-bottom:.875rem">Analytics</h2>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+
+    <!-- Deadline Timeline -->
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;color:#e8e6f0;margin-bottom:1rem">Deadlines timeline</div>
+      <div style="position:relative;height:200px">
+        <canvas id="timelineChart"></canvas>
+      </div>
+      <div style="font-size:11px;color:#555;margin-top:.5rem;display:flex;gap:1rem">
+        <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#E24B4A;margin-right:4px"></span>Overdue</span>
+        <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#EF9F27;margin-right:4px"></span>&lt; 30 days</span>
+        <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#7F77DD;margin-right:4px"></span>Upcoming</span>
+      </div>
+    </div>
+
+    <!-- App type donut -->
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;color:#e8e6f0;margin-bottom:1rem">By type</div>
+      <div style="position:relative;height:200px">
+        <canvas id="typeChart"></canvas>
+      </div>
+      <div style="font-size:11px;color:#555;margin-top:.5rem;display:flex;gap:1rem">
+        <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#7F77DD;margin-right:4px"></span>Reach</span>
+        <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#1D9E75;margin-right:4px"></span>Match</span>
+        <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#BA7517;margin-right:4px"></span>Safety</span>
+      </div>
+    </div>
+
+    <!-- Scholarship budget (full width) -->
+    <div class="card" style="grid-column:1/-1">
+      <div style="font-size:13px;font-weight:600;color:#e8e6f0;margin-bottom:.5rem">Scholarship budget</div>
+      <div style="font-size:12px;color:#555;margin-bottom:1rem">
+        Applied for <strong style="color:#e8e6f0">${{ stats.total_applied_usd }}</strong> USD ·
+        Awarded <strong style="color:#1D9E75">${{ stats.total_awarded_usd }}</strong> USD
+      </div>
+      <div style="position:relative;height:110px">
+        <canvas id="budgetChart"></canvas>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const _textColor = '#888780';
+const _gridColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.color = _textColor;
+Chart.defaults.font.family = 'inherit';
+Chart.defaults.font.size   = 12;
+
+// --- Timeline ---
+const _uniNames  = {{ timeline_labels_json|safe }};
+const _deadlines = {{ timeline_dates_json|safe }};
+const _today     = new Date();
+
+const _tlData = _deadlines.map(d => {
+  const diff = Math.round((new Date(d) - _today) / 86400000);
+  return diff;
+});
+
+new Chart(document.getElementById('timelineChart'), {
+  type: 'bar',
+  data: {
+    labels: _uniNames,
+    datasets: [{
+      data: _tlData,
+      backgroundColor: _tlData.map(d =>
+        d < 0  ? 'rgba(226,75,74,0.75)'   :
+        d < 30 ? 'rgba(239,159,39,0.75)'  :
+                 'rgba(127,119,221,0.75)'
+      ),
+      borderRadius: 4,
+      borderSkipped: false,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: c => c.raw + ' days' } }
+    },
+    scales: {
+      x: { grid: { color: _gridColor },
+           title: { display: true, text: 'Days from today', color: _textColor, font: { size: 11 } } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// --- Type donut ---
+new Chart(document.getElementById('typeChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Reach', 'Match', 'Safety'],
+    datasets: [{
+      data: {{ status_counts_json|safe }},
+      backgroundColor: ['rgba(127,119,221,0.85)', 'rgba(29,158,117,0.85)', 'rgba(186,117,23,0.85)'],
+      borderWidth: 0,
+      hoverOffset: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '68%',
+    plugins: { legend: { display: false } }
+  }
+});
+
+// --- Budget bars ---
+new Chart(document.getElementById('budgetChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Applied for', 'Awarded'],
+    datasets: [{
+      data: [{{ scholarship_applied }}, {{ scholarship_awarded }}],
+      backgroundColor: ['rgba(55,138,221,0.75)', 'rgba(29,158,117,0.75)'],
+      borderRadius: 5,
+      borderSkipped: false,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false },
+      tooltip: { callbacks: { label: c => '$' + c.raw.toLocaleString() } } },
+    scales: {
+      x: { grid: { color: _gridColor },
+           ticks: { callback: v => '$' + (v >= 1000 ? v/1000 + 'k' : v) } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+</script>
+{% endblock %}
