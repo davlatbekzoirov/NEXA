@@ -64,7 +64,7 @@ static/          Static assets (favicon, etc.)
 
 ```bash
 # clone the repo
-git clone <your-repo-url>
+git clone https://github.com/davlatbekzoirov/NEXA.git
 cd NEXA
 
 # create and activate a virtual environment
