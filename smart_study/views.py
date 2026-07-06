@@ -24,7 +24,7 @@ User = get_user_model()
 # ─── Dashboard ────────────────────────────────────────────────────────────────
 
 @login_required
-def dashboard(request):
+def smart_study(request):
     courses = Course.objects.filter(user=request.user).prefetch_related('categories__assignments')
     upcoming = (
         Assignment.objects
