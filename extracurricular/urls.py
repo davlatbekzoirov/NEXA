@@ -5,7 +5,7 @@ from . import views
 app_name = "extracurricular"
 
 urlpatterns = [
-    path("", views.dashboard, name="dashboard"),
+    path("", views.campuspulse, name="campuspulse"),
 
     path("clubs/", views.club_list, name="club_list"),
     path("clubs/new/", views.club_create, name="club_create"),

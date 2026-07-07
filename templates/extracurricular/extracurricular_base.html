@@ -470,19 +470,11 @@
     <div class="nav-links">
       <nav>
         {% if user.is_authenticated %}
-          <a href="{% url 'universities:main_uni' %}" {% if request.resolver_match.url_name == 'main_uni' %}class="active"{% endif %}>UniTracker</a>
-          <a href="{% url 'smart_study:smart_study' %}" {% if request.resolver_match.url_name == 'smart_study' %}class="active"{% endif %}>SmartStudy</a>
-          <a href="{% url 'extracurricular:campuspulse' %}" {% if request.resolver_match.url_name == 'campuspulse' %}class="active"{% endif %}>CampusPulse</a>
-          
-          <a href="{% url 'home:about' %}" {% if request.resolver_match.url_name == 'about' %}class="active"{% endif %}>About</a>
-          <a href="{% url 'home:features' %}" {% if request.resolver_match.url_name == 'features' %}class="active"{% endif %}>Features</a>
-          <a href="{% url 'home:help' %}" {% if request.resolver_match.url_name == 'help' %}class="active"{% endif %}>Help</a>
-          <a href="{% url 'home:contact' %}" {% if request.resolver_match.url_name == 'contact' %}class="active"{% endif %}>Contact</a>
-        {% else %}
-          <a href="{% url 'home:about' %}" {% if request.resolver_match.url_name == 'about' %}class="active"{% endif %}>About</a>
-          <a href="{% url 'home:features' %}" {% if request.resolver_match.url_name == 'features' %}class="active"{% endif %}>Features</a>
-          <a href="{% url 'home:help' %}" {% if request.resolver_match.url_name == 'help' %}class="active"{% endif %}>Help</a>
-          <a href="{% url 'home:contact' %}" {% if request.resolver_match.url_name == 'contact' %}class="active"{% endif %}>Contact</a>
+            <a href="{% url 'extracurricular:campuspulse' %}">Dashboard</a>
+            <a href="{% url 'extracurricular:club_list' %}">Clubs</a>
+            <a href="{% url 'extracurricular:volunteer_list' %}">Volunteering</a>
+            <a href="{% url 'extracurricular:impact_list' %}">Impact Journal</a>
+            <a href="{% url 'extracurricular:event_list' %}">Events</a>
         {% endif %}
       </nav>
     </div>

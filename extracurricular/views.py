@@ -74,7 +74,7 @@ def get_or_create_feed_token(user):
 
 
 @login_required
-def dashboard(request):
+def campuspulse(request):
     user = request.user
 
     total_clubs = Club.objects.filter(user=user, is_active=True).count()
@@ -99,7 +99,7 @@ def dashboard(request):
         "recent_impacts": recent_impacts,
         "feed_token": get_or_create_feed_token(user).token,
     }
-    return render(request, "extracurricular/dashboard.html", context)
+    return render(request, "extracurricular/campuspulse.html", context)
 
 
 @login_required
