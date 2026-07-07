@@ -1,0 +1,51 @@
+{% extends 'extracurricular/extracurricular_base.html' %}
+{% block title %}Impact Journal · NEXA{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1 class="page-title">Impact Journal</h1>
+    <div class="gap-2">
+        <a class="btn btn-outline" href="{% url 'extracurricular:resume_generator' %}">📝 Resume Generator</a>
+        <a class="btn btn-outline" href="{% url 'extracurricular:analytics_insights' %}">📊 Insights & Gaps</a>
+        <a class="btn btn-primary" href="{% url 'extracurricular:impact_create' %}">+ Log Achievement</a>
+    </div>
+</div>
+
+<div class="card" style="background: rgba(127,119,221,.05); border-color: rgba(127,119,221,.15); margin-bottom: 1rem; padding: 10px 1.5rem;">
+    <div class="flex-between">
+        <span class="text-muted" style="color: #AFA9EC;">✨ Ready to showcase your verified student involvement portfolio to recruiters?</span>
+        <a class="btn btn-outline btn-sm" href="{% url 'extracurricular:portfolio_settings' %}" style="border-color: rgba(127,119,221,.3); color: #fff;">Configure Portfolio Link</a>
+    </div>
+</div>
+
+<div class="card">
+    {% for entry in entries %}
+    <div class="flex-between" style="align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,.05);">
+        <div>
+            <div class="gap-2" style="margin-bottom: 4px;">
+                <strong>{{ entry.date }}</strong>
+                {% if entry.club %}<span class="badge badge-match">{{ entry.club.name }}</span>{% endif %}
+            </div>
+            <div>{{ entry.description }}</div>
+            {% if entry.impact %}<div class="text-muted" style="margin-top: 4px;"><em>{{ entry.impact }}</em></div>{% endif %}
+        </div>
+        <div class="gap-2">
+            <a class="btn btn-outline btn-sm" href="{% url 'extracurricular:impact_edit' entry.pk %}">Edit</a>
+            <a class="btn btn-danger btn-sm" href="{% url 'extracurricular:impact_delete' entry.pk %}">Delete</a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty">
+        <div class="empty-icon">📓</div>
+        <p>No impact entries yet — log your wins as they happen!</p>
+    </div>
+    {% endfor %}
+</div>
+
+{% if entries %}
+<style>
+.card > div.flex-between:last-of-type { border-bottom: none; }
+</style>
+{% endif %}
+
+{% endblock %}

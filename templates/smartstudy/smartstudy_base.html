@@ -470,19 +470,13 @@
     <div class="nav-links">
       <nav>
         {% if user.is_authenticated %}
-          <a href="{% url 'universities:main_uni' %}" {% if request.resolver_match.url_name == 'main_uni' %}class="active"{% endif %}>UniTracker</a>
-          <a href="{% url 'smart_study:smart_study' %}" {% if request.resolver_match.url_name == 'smart_study' %}class="active"{% endif %}>SmartStudy</a>
-          <a href="{% url 'extracurricular:campuspulse' %}" {% if request.resolver_match.url_name == 'campuspulse' %}class="active"{% endif %}>CampusPulse</a>
-          
-          <a href="{% url 'home:about' %}" {% if request.resolver_match.url_name == 'about' %}class="active"{% endif %}>About</a>
-          <a href="{% url 'home:features' %}" {% if request.resolver_match.url_name == 'features' %}class="active"{% endif %}>Features</a>
-          <a href="{% url 'home:help' %}" {% if request.resolver_match.url_name == 'help' %}class="active"{% endif %}>Help</a>
-          <a href="{% url 'home:contact' %}" {% if request.resolver_match.url_name == 'contact' %}class="active"{% endif %}>Contact</a>
-        {% else %}
-          <a href="{% url 'home:about' %}" {% if request.resolver_match.url_name == 'about' %}class="active"{% endif %}>About</a>
-          <a href="{% url 'home:features' %}" {% if request.resolver_match.url_name == 'features' %}class="active"{% endif %}>Features</a>
-          <a href="{% url 'home:help' %}" {% if request.resolver_match.url_name == 'help' %}class="active"{% endif %}>Help</a>
-          <a href="{% url 'home:contact' %}" {% if request.resolver_match.url_name == 'contact' %}class="active"{% endif %}>Contact</a>
+            <a href="{% url 'universities:main_uni' %}" {% if request.resolver_match.url_name == 'main_uni' %}class="active"{% endif %}>Dashboard</a>
+            <a href="{% url 'smart_study:course_list' %}" class="{% if 'course' in request.resolver_match.url_name %}active{% endif %}">Courses</a>
+            <a href="{% url 'smart_study:schedule' %}" class="{% if request.resolver_match.url_name == 'schedule' %}active{% endif %}">Schedule</a>
+            <a href="{% url 'smart_study:pomodoro' %}" class="{% if request.resolver_match.url_name == 'pomodoro' %}active{% endif %}">Pomodoro</a>
+            <a href="{% url 'smart_study:analytics' %}" class="{% if request.resolver_match.url_name == 'analytics' %}active{% endif %}">Analytics</a>
+            <a href="{% url 'smart_study:group_list' %}" class="{% if 'group' in request.resolver_match.url_name %}active{% endif %}">Groups</a>
+            <a href="{% url 'smart_study:friends' %}" class="{% if request.resolver_match.url_name == 'friends' %}active{% endif %}">Friends</a>
         {% endif %}
       </nav>
     </div>
