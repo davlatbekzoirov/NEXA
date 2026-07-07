@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'accounts',
     'universities',
     'smart_study',
+    'extracurricular',
 ]
 
 MIDDLEWARE = [
