@@ -1,15 +1,16 @@
 # NEXA
 
-NEXA is a Django web app for tracking university applications end to end — deadlines, tasks, scholarships, documents, and test scores — in one place.
+NEXA is a Django web app that helps students manage university applications, coursework, extracurricular life, and personal budgeting — all in one place.
 
 ## Features
 
-**Application tracking**
+### University Applications
 - Add universities with type (reach / match / safety), status (preparing, submitted, interview, accepted, rejected, deferred), and deadline
 - Auto-generated application checklists (tasks) per university, tailored to the university type
 - Regenerate checklists at any time without losing custom or in-progress tasks
 - Dashboard with at-a-glance stats: total applications, submitted, accepted, interviews, deadlines due in the next 30 days, and reach/match/safety breakdown
 - Deadline timeline and status-distribution data for charting
+- University autocomplete when adding a new school
 
 **Scholarships**
 - Track scholarships per university, including amount and currency (USD, EUR, GBP)
@@ -28,7 +29,28 @@ NEXA is a Django web app for tracking university applications end to end — dea
 - Personal, token-protected iCal feed of application deadlines, subscribable from any calendar app
 - Regenerate the feed token to invalidate the old URL
 
-**Accounts**
+### Smart Study
+- Course and category management, with assignments tracked per course
+- Grade tracking and analytics on performance over time
+- Study scheduler for planning coursework and sessions
+- Built-in Pomodoro timer for focused study sessions
+- Study groups: create/join groups, group detail pages
+- Social features: friends list and activity
+- Personal analytics dashboard
+
+### Extracurricular
+- Track clubs, membership, and club details
+- Log events and volunteer work
+- Record impact entries to quantify contributions over time
+- Analytics/insights on extracurricular activity
+- "Campus Pulse" feed for campus-wide activity
+- Public portfolio page to showcase clubs, events, and volunteer impact, with configurable portfolio settings
+- Auto-generated resume content from tracked activities
+
+### Budget
+- Personal budget dashboard for tracking finances alongside applications and school costs
+
+### Accounts
 - Registration, login/logout
 - Profile editing, including a profile photo
 - Email address changes via a verification-code confirmation step
@@ -37,20 +59,25 @@ NEXA is a Django web app for tracking university applications end to end — dea
 ## Tech stack
 
 - **Backend:** Django
-- **Async / background tasks:** Celery (see `core/celery.py`, `universities/tasks.py`)
+- **Async / background tasks:** Celery (see `core/celery.py`, `universities/tasks.py`, `extracurricular/tasks.py`)
 - **Database:** SQLite by default (`db.sqlite3`), swappable via Django settings
 - **Templates:** Django templates (`templates/`), no frontend framework required
 
 ## Project structure
 
 ```
-core/            Project settings, URLs, WSGI/ASGI, Celery config
-accounts/        Authentication, profile, email change, password change
-home/            Marketing/static pages (about, features, help, contact, landing)
-universities/    Core domain: universities, scholarships, documents, test scores,
-                 application tasks, calendar feed
-templates/       HTML templates, organized by app
-static/          Static assets (favicon, etc.)
+core/              Project settings, URLs, WSGI/ASGI, Celery config
+accounts/          Authentication, profile, email change, password change
+home/              Marketing/static pages (about, features, help, contact, landing)
+universities/      Application tracking: universities, scholarships, documents,
+                   test scores, application tasks, calendar feed
+smart_study/       Courses, assignments, grades, scheduler, study groups,
+                   friends/social, Pomodoro timer, analytics
+extracurricular/   Clubs, events, volunteering, impact tracking, public
+                   portfolio, resume generator, Campus Pulse feed
+budget/            Personal budget dashboard
+templates/         HTML templates, organized by app
+static/            Static assets (favicon, etc.)
 ```
 
 ## Getting started
@@ -109,6 +136,10 @@ This can be added to Google Calendar, Apple Calendar, Outlook, etc. as a subscri
 ## Document sharing
 
 From a document's detail page, you can generate a time-limited link (1–30 days) that lets anyone with the URL view the document without logging in. Links can be revoked manually and track how many times they've been accessed.
+
+## Public portfolio
+
+Extracurricular activity (clubs, events, volunteer work, and impact) can be published to a public, shareable portfolio page, with settings to control what's visible.
 
 ## License
 
