@@ -69,7 +69,7 @@
       box-shadow: 0 1px 0 var(--brass-line);
       padding: 0 1.5rem;
       display: flex; align-items: center; justify-content: space-between;
-      height: 58px; position: sticky; top: 0; z-index: 10;
+      height: 58px; position: sticky; top: 0; z-index: 20;
     }
     .nav-brand {
       font-family: var(--font-display);
@@ -462,31 +462,144 @@
     .contact-links a { font-family: var(--font-mono); font-size: 12.5px; }
     .char-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); text-align: right; margin-top: 4px; }
     .char-count.is-near-limit { color: var(--ink-amber); }
+
+    /* ─── Nav: mobile hamburger ────────────────────────── */
+    .nav-toggle {
+      display: none;
+      align-items: center; justify-content: center;
+      width: 36px; height: 36px;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      background: var(--surface);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .nav-toggle:hover { border-color: var(--brass-line); background: var(--surface-2); }
+    .nav-toggle-bars {
+      position: relative;
+      width: 16px; height: 11px;
+    }
+    .nav-toggle-bars span {
+      position: absolute; left: 0; width: 100%; height: 1.5px;
+      background: var(--ink); border-radius: 1px;
+      transition: transform .2s ease, opacity .2s ease, top .2s ease;
+    }
+    .nav-toggle-bars span:nth-child(1) { top: 0; }
+    .nav-toggle-bars span:nth-child(2) { top: 5px; }
+    .nav-toggle-bars span:nth-child(3) { top: 10px; }
+    .nav.is-open .nav-toggle-bars span:nth-child(1) { top: 5px; transform: rotate(45deg); }
+    .nav.is-open .nav-toggle-bars span:nth-child(2) { opacity: 0; }
+    .nav.is-open .nav-toggle-bars span:nth-child(3) { top: 5px; transform: rotate(-45deg); }
+
+    .nav-backdrop { display: none; }
+
+    @media (max-width: 860px) {
+      .nav-toggle { display: flex; }
+
+      .nav-links,
+      .nav-user {
+        position: fixed;
+        top: 58px; right: 0;
+        width: min(78vw, 300px);
+        height: calc(100vh - 58px);
+        background: var(--bg-raise);
+        border-left: 1px solid var(--border-strong);
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 1rem;
+        transform: translateX(100%);
+        transition: transform .25s ease;
+        overflow-y: auto;
+        z-index: 21;
+      }
+      .nav-links { padding-bottom: .5rem; }
+      .nav-user {
+        top: calc(58px + var(--links-h, 0px));
+        border-top: none;
+      }
+      /* Stack the two panels into one scrollable column */
+      .nav-links, .nav-user { top: 58px; }
+      .nav-user {
+        padding-top: 0;
+      }
+
+      .nav.is-open .nav-links,
+      .nav.is-open .nav-user {
+        transform: translateX(0);
+      }
+
+      .nav-links a {
+        width: 100%;
+        padding: 12px 10px;
+        font-size: 13.5px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav-user {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding-top: 1rem;
+        margin-top: 0;
+      }
+      .nav-user::before {
+        content: 'Account';
+        font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em;
+        text-transform: uppercase; color: var(--text-faint);
+        padding-bottom: .5rem; border-bottom: 1px solid var(--border-strong);
+        margin-bottom: .25rem;
+      }
+      .user-pill { width: 100%; }
+      .btn-ghost-sm, .btn-brass-sm { text-align: center; width: 100%; }
+
+      .nav-backdrop {
+        display: block;
+        position: fixed; inset: 58px 0 0 0;
+        background: rgba(0,0,0,.45);
+        opacity: 0; pointer-events: none;
+        transition: opacity .25s ease;
+        z-index: 19;
+      }
+      .nav.is-open ~ .nav-backdrop { opacity: 1; pointer-events: auto; }
+    }
+
+    /* Combine links+user into a single stacked panel on mobile by
+       putting nav-user directly under nav-links visually */
+    @media (max-width: 860px) {
+      .nav-links { z-index: 21; }
+      .nav-user { z-index: 21; padding-top: 0; }
+    }
   </style>
 </head>
 <body>
-  <nav class="nav">
+  <nav class="nav" id="site-nav">
     <a href="{% url 'home:home' %}" class="nav-brand" style="text-decoration:none;">NEXA</a>
-    <div class="nav-links">
-      <nav>
-        {% if user.is_authenticated %}
-          <a href="{% url 'universities:main_uni' %}" {% if request.resolver_match.url_name == 'main_uni' %}class="active"{% endif %}>UniTracker</a>
-          <a href="{% url 'smart_study:smart_study' %}" {% if request.resolver_match.url_name == 'smart_study' %}class="active"{% endif %}>SmartStudy</a>
-          <a href="{% url 'extracurricular:campuspulse' %}" {% if request.resolver_match.url_name == 'campuspulse' %}class="active"{% endif %}>CampusPulse</a>
-          
-          <a href="{% url 'home:about' %}" {% if request.resolver_match.url_name == 'about' %}class="active"{% endif %}>About</a>
-          <a href="{% url 'home:features' %}" {% if request.resolver_match.url_name == 'features' %}class="active"{% endif %}>Features</a>
-          <a href="{% url 'home:help' %}" {% if request.resolver_match.url_name == 'help' %}class="active"{% endif %}>Help</a>
-          <a href="{% url 'home:contact' %}" {% if request.resolver_match.url_name == 'contact' %}class="active"{% endif %}>Contact</a>
-        {% else %}
-          <a href="{% url 'home:about' %}" {% if request.resolver_match.url_name == 'about' %}class="active"{% endif %}>About</a>
-          <a href="{% url 'home:features' %}" {% if request.resolver_match.url_name == 'features' %}class="active"{% endif %}>Features</a>
-          <a href="{% url 'home:help' %}" {% if request.resolver_match.url_name == 'help' %}class="active"{% endif %}>Help</a>
-          <a href="{% url 'home:contact' %}" {% if request.resolver_match.url_name == 'contact' %}class="active"{% endif %}>Contact</a>
-        {% endif %}
-      </nav>
+
+    <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+      <span class="nav-toggle-bars"><span></span><span></span><span></span></span>
+    </button>
+
+    <div class="nav-links" id="nav-links">
+      {% if user.is_authenticated %}
+        <a href="{% url 'universities:main_uni' %}" {% if request.resolver_match.url_name == 'main_uni' %}class="active"{% endif %}>UniTracker</a>
+        <a href="{% url 'smart_study:smart_study' %}" {% if request.resolver_match.url_name == 'smart_study' %}class="active"{% endif %}>SmartStudy</a>
+        <a href="{% url 'extracurricular:campuspulse' %}" {% if request.resolver_match.url_name == 'campuspulse' %}class="active"{% endif %}>CampusPulse</a>
+        <a href="{% url 'budget:budget' %}" {% if request.resolver_match.url_name == 'budget' %}class="active"{% endif %}>CampusCribs</a>
+
+        <a href="{% url 'home:about' %}" {% if request.resolver_match.url_name == 'about' %}class="active"{% endif %}>About</a>
+        <a href="{% url 'home:features' %}" {% if request.resolver_match.url_name == 'features' %}class="active"{% endif %}>Features</a>
+        <a href="{% url 'home:help' %}" {% if request.resolver_match.url_name == 'help' %}class="active"{% endif %}>Help</a>
+        <a href="{% url 'home:contact' %}" {% if request.resolver_match.url_name == 'contact' %}class="active"{% endif %}>Contact</a>
+      {% else %}
+        <a href="{% url 'home:about' %}" {% if request.resolver_match.url_name == 'about' %}class="active"{% endif %}>About</a>
+        <a href="{% url 'home:features' %}" {% if request.resolver_match.url_name == 'features' %}class="active"{% endif %}>Features</a>
+        <a href="{% url 'home:help' %}" {% if request.resolver_match.url_name == 'help' %}class="active"{% endif %}>Help</a>
+        <a href="{% url 'home:contact' %}" {% if request.resolver_match.url_name == 'contact' %}class="active"{% endif %}>Contact</a>
+      {% endif %}
     </div>
-    <div class="nav-user">
+
+    <div class="nav-user" id="nav-user">
       {% if user.is_authenticated %}
         <a href="{% url 'profile' %}" class="user-pill">
           <div class="avatar-circle avatar-sm">
@@ -504,6 +617,8 @@
         <a href="{% url 'register' %}" class="btn-brass-sm">Sign up</a>
       {% endif %}
     </div>
+
+    <div class="nav-backdrop" id="nav-backdrop"></div>
   </nav>
 
   <div class="container">
@@ -516,5 +631,45 @@
     {% endif %}
     {% block content %}{% endblock %}
   </div>
+
+  <script>
+    (function () {
+      var nav = document.getElementById('site-nav');
+      var toggle = document.getElementById('nav-toggle');
+      var backdrop = document.getElementById('nav-backdrop');
+      if (!nav || !toggle) return;
+
+      function closeMenu() {
+        nav.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+      function openMenu() {
+        nav.classList.add('is-open');
+        toggle.setAttribute('aria-expanded', 'true');
+      }
+      function toggleMenu() {
+        if (nav.classList.contains('is-open')) closeMenu();
+        else openMenu();
+      }
+
+      toggle.addEventListener('click', toggleMenu);
+      if (backdrop) backdrop.addEventListener('click', closeMenu);
+
+      // Close on link click (mobile)
+      nav.querySelectorAll('.nav-links a, .nav-user a').forEach(function (el) {
+        el.addEventListener('click', closeMenu);
+      });
+
+      // Close on resize back to desktop
+      window.addEventListener('resize', function () {
+        if (window.innerWidth > 860) closeMenu();
+      });
+
+      // Close on Escape
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeMenu();
+      });
+    })();
+  </script>
 </body>
 </html>
