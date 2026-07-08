@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block title %}Student Ledger · NEXA{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Smart Student Budgeter</h1>
+    <span class="badge badge-upcoming">Velocity Framework</span>
+</div>
+
+{% if noodle_alert %}
+<div class="message message-error" style="border-left: 4px solid #E24B4A; background: #2c1a1a;">
+    <strong>🍜 "Instant Noodle" Dashboard Alert!</strong>
+    <p>Your non-essential spending rate means your funds will deplete in <span class="days-urgent">{{ runway_days }} days</span>. There are {{ days_remaining }} days left in the semester.</p>
+</div>
+{% endif %}
+
+<div class="stat-grid">
+    <div class="stat stat-purple">
+        <div class="stat-label">Net Balance</div>
+        <div class="stat-value">${{ current_balance }}</div>
+        <div class="stat-sub">Aggregated Ledger Cash</div>
+    </div>
+    <div class="stat {% if noodle_alert %}stat-amber{% else %}stat-teal{% endif %}">
+        <div class="stat-label">Predictive Runway</div>
+        <div class="stat-value">{{ runway_days }} Days</div>
+        <div class="stat-sub">Exhaustion Forecast</div>
+    </div>
+    <div class="stat stat-blue">
+        <div class="stat-label">Semester Counter</div>
+        <div class="stat-value">{{ days_remaining }} Days</div>
+        <div class="stat-sub">Remaining Term Target</div>
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="card">
+        <h3 class="card-title">Add Transaction</h3>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" name="title" required placeholder="e.g., Semester Textbooks">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Amount ($)</label>
+                    <input type="number" step="0.01" name="amount" required>
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <select name="type">
+                        <option value="EXPENSE">Expense</option>
+                        <option value="INCOME">Income</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select name="category">
+                    <option value="">---------</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}">{{ cat.name }} {% if cat.is_essential %}(Essential){% endif %}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Log Transaction</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">Recent Running History</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in entries %}
+                    <tr>
+                        <td>{{ entry.title }}</td>
+                        <td><span class="text-muted">{{ entry.category.name|default:"Unassigned" }}</span></td>
+                        <td style="font-weight: 600; color: {% if entry.type == 'INCOME' %}#1D9E75{% else %}#E24B4A{% endif %};">
+                            {% if entry.type == 'INCOME' %}+{% else %}-{% endif %}${{ entry.amount }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-muted" style="text-align: center;">No ledger transactions registered yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
