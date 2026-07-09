@@ -11,4 +11,5 @@ urlpatterns = [
     path('study/', include('smart_study.urls')),
     path('extracurricular/', include('extracurricular.urls')),
     path('budget/', include('budget.urls')),
+    path('housing/', include('housing.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
