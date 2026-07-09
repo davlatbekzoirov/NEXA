@@ -471,6 +471,7 @@
       <nav>
         {% if user.is_authenticated %}
           <a href="{% url 'budget:budget' %}">Student Ledger</a>
+          <a href="{% url 'housing:pipeline' %}">Housing Tracker</a>
         {% endif %}
       </nav>
     </div>

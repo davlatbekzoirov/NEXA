@@ -1,0 +1,70 @@
+{% extends 'base/campuscrbs_base.html' %}
+{% block title %}Property Board · NEXA{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Housing Search Tracker CRM</h1>
+</div>
+
+<div class="card" style="margin-bottom: 2rem;">
+    <h3 class="card-title">Add Property Prospect to Pipeline</h3>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="form-group"><input type="text" name="address" placeholder="Property Address" required></div>
+            <div class="form-group"><input type="number" step="0.01" name="rent_price" placeholder="Monthly Rent Total" required></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><input type="number" step="0.1" name="campus_distance" placeholder="Distance to Campus (mi)" required></div>
+            <div class="form-group"><input type="number" min="1" max="5" name="transit_proximity" placeholder="Transit Score (1-5)" required></div>
+            <div class="form-group"><input type="number" min="1" max="5" name="wifi_capability" placeholder="WiFi Capability Score (1-5)" required></div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Stage Property Prospect</button>
+    </form>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
+    <div class="card" style="background:#1e1e1d;">
+        <h4 class="form-section-title">Found</h4>
+        {% for p in found %}
+            <div class="card" style="margin-bottom:10px; background:#2a2a28;">
+                <h5>{{ p.address }}</h5>
+                <p class="text-muted">${{ p.rent_price }}/mo</p>
+                <div style="margin-top:5px;"><small>🌐 Wi-Fi: {{ p.wifi_capability }}/5</small></div>
+                <div style="margin-top:8px;"><a href="{% url 'housing:update_status' p.id 'SCHEDULED' %}" class="btn btn-outline btn-sm" style="font-size:10px; padding:2px 6px;">Advance →</a></div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="card" style="background:#1e1e1d;">
+        <h4 class="form-section-title">Viewing Scheduled</h4>
+        {% for p in scheduled %}
+            <div class="card" style="margin-bottom:10px; background:#2a2a28;">
+                <h5>{{ p.address }}</h5>
+                <p class="text-muted">${{ p.rent_price }}/mo</p>
+                <div style="margin-top:8px;"><a href="{% url 'housing:update_status' p.id 'APPLIED' %}" class="btn btn-outline btn-sm" style="font-size:10px; padding:2px 6px;">Advance →</a></div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="card" style="background:#1e1e1d;">
+        <h4 class="form-section-title">Applied</h4>
+        {% for p in applied %}
+            <div class="card" style="margin-bottom:10px; background:#2a2a28;">
+                <h5>{{ p.address }}</h5>
+                <div style="margin-top:8px;"><a href="{% url 'housing:update_status' p.id 'SIGNED' %}" class="btn btn-success btn-sm" style="font-size:10px; padding:2px 6px;">Sign Lease ✓</a></div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="card" style="background:#1e1e1d;">
+        <h4 class="form-section-title">Lease Signed</h4>
+        {% for p in signed %}
+            <div class="card" style="margin-bottom:10px; background: rgba(29,158,117,0.1); border-color:#1D9E75;">
+                <h5>{{ p.address }}</h5>
+                <span class="badge badge-safety">Locked In</span>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
