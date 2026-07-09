@@ -1,6 +1,6 @@
 # NEXA
 
-NEXA is a Django web app that helps students manage university applications, coursework, extracurricular life, and personal budgeting — all in one place.
+NEXA is a Django web app that helps students manage university applications, coursework, extracurricular life, housing, and personal budgeting — all in one place.
 
 ## Features
 
@@ -47,6 +47,10 @@ NEXA is a Django web app that helps students manage university applications, cou
 - Public portfolio page to showcase clubs, events, and volunteer impact, with configurable portfolio settings
 - Auto-generated resume content from tracked activities
 
+### Housing
+- Track student housing/dorm search as a pipeline, from shortlisting through application and move-in
+- Dedicated pipeline view (`housing/pipeline.html`) for managing housing options alongside university applications
+
 ### Budget
 - Personal budget dashboard for tracking finances alongside applications and school costs
 
@@ -75,9 +79,11 @@ smart_study/       Courses, assignments, grades, scheduler, study groups,
                    friends/social, Pomodoro timer, analytics
 extracurricular/   Clubs, events, volunteering, impact tracking, public
                    portfolio, resume generator, Campus Pulse feed
+housing/           Student housing/dorm pipeline tracking
 budget/            Personal budget dashboard
 templates/         HTML templates, organized by app
 static/            Static assets (favicon, etc.)
+media/             User-uploaded files (e.g. profile photos)
 ```
 
 ## Getting started
