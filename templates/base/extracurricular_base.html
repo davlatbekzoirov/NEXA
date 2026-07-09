@@ -18,9 +18,9 @@
       --border:        rgba(231,221,191,.08);
       --border-strong: rgba(231,221,191,.15);
 
-      --ink:       #EDE6CC;   /* headline / brand cream */
-      --text:      #D8D3BE;   /* body */
-      --text-dim:  #929A8C;   /* muted / labels */
+      --ink:       #EDE6CC;
+      --text:      #D8D3BE;
+      --text-dim:  #929A8C;
       --text-faint:#636B5F;
 
       --brass:      #CBA23F;
@@ -49,6 +49,8 @@
       *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
     }
 
+    html { -webkit-text-size-adjust: 100%; }
+
     body {
       font-family: var(--font-body);
       background: var(--bg);
@@ -57,24 +59,28 @@
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
       color: var(--text);
       font-size: 15px; line-height: 1.6;
+      overflow-x: hidden;
     }
     a { color: var(--brass); text-decoration: none; }
     a:hover { text-decoration: underline; }
     :focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
 
-    /* ─── Nav ─────────────────────────────────────────── */
+    img { max-width: 100%; height: auto; }
+
     .nav {
       background: linear-gradient(180deg, var(--bg-raise), var(--bg-raise) 96%, rgba(0,0,0,.08));
       border-bottom: 1px solid var(--border-strong);
       box-shadow: 0 1px 0 var(--brass-line);
       padding: 0 1.5rem;
       display: flex; align-items: center; justify-content: space-between;
-      height: 58px; position: sticky; top: 0; z-index: 10;
+      height: 58px; position: sticky; top: 0; z-index: 20;
+      gap: .75rem;
     }
     .nav-brand {
       font-family: var(--font-display);
       font-size: 17px; font-weight: 600; color: var(--ink);
       display: flex; align-items: center; gap: 10px; letter-spacing: -.01em;
+      flex-shrink: 0;
     }
     .nav-brand::before {
       content: '';
@@ -92,10 +98,11 @@
       padding: 7px 12px; border-radius: 6px; font-size: 12.5px;
       letter-spacing: .02em;
       color: var(--text-dim); transition: all .15s;
+      white-space: nowrap;
     }
     .nav-links a:hover { background: var(--surface-2); color: var(--ink); text-decoration: none; }
     .nav-links a.active { background: var(--brass-soft); color: var(--brass); }
-    .nav-user { display: flex; align-items: center; gap: 8px; }
+    .nav-user { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
     .user-pill {
       display: flex; align-items: center; gap: 9px;
@@ -129,7 +136,6 @@
     }
     .btn-brass-sm:hover { background: var(--brass); color: #1A1408; text-decoration: none; }
 
-    /* ─── Avatar ──────────────────────────────────────── */
     .avatar-circle {
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
@@ -145,12 +151,10 @@
     .avatar-md { width: 56px; height: 56px; font-size: 22px; }
     .avatar-lg { width: 120px; height: 120px; font-size: 42px; }
 
-    /* ─── Layout ──────────────────────────────────────── */
     .container { max-width: 920px; margin: 0 auto; padding: 2rem 1.5rem; }
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; gap: .75rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
     .page-title { font-family: var(--font-display); font-size: 26px; font-weight: 600; letter-spacing: -.01em; color: var(--ink); }
 
-    /* ─── Cards ───────────────────────────────────────── */
     .card {
       background:
         linear-gradient(135deg, transparent calc(100% - 22px), var(--border-strong) calc(100% - 22px), var(--border-strong) calc(100% - 21px), transparent calc(100% - 21px)),
@@ -163,7 +167,6 @@
     }
     .card + .card { margin-top: 1rem; }
 
-    /* ─── Stat grid (ledger entries) ──────────────────── */
     .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 2rem; }
     .stat {
       border-radius: var(--radius);
@@ -188,19 +191,18 @@
     .stat-value { font-family: var(--font-display); font-size: 33px; font-weight: 600; color: var(--ink); line-height: 1; }
     .stat-sub   { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); margin-top: 6px; }
 
-    /* ─── Table ───────────────────────────────────────── */
-    .table-wrap { overflow-x: auto; }
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     table { width: 100%; border-collapse: collapse; font-size: 14px; }
     th {
       text-align: left; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase;
       letter-spacing: .08em; color: var(--text-faint);
       padding: 9px 12px; border-bottom: 1px solid var(--border-strong);
+      white-space: nowrap;
     }
     td { padding: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; color: var(--text); }
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: var(--surface-2); }
 
-    /* ─── Badges — stamped marks ──────────────────────── */
     .badge {
       display: inline-block; font-family: var(--font-mono);
       font-size: 10.5px; font-weight: 500; padding: 3px 10px;
@@ -220,7 +222,6 @@
     .badge-safety    { color: var(--ink-green); }
     .badge-urgent    { color: #fff; background: var(--ink-rose); border-style: solid; transform: rotate(-2deg); }
 
-    /* ─── Buttons ─────────────────────────────────────── */
     .btn {
       display: inline-flex; align-items: center; gap: 6px;
       font-family: var(--font-body);
@@ -267,7 +268,6 @@
     .btn-sm { padding: 5px 12px; font-size: 13px; border-radius: 6px; }
     .btn-lg { padding: 11px 24px; font-size: 15px; border-radius: 8px; }
 
-    /* ─── Forms ───────────────────────────────────────── */
     .form-group { margin-bottom: 1rem; }
     .form-group label { display: block; font-family: var(--font-mono); font-size: 11px; font-weight: 500; color: var(--text-dim); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .06em; }
     .form-group input,
@@ -275,7 +275,7 @@
     .form-group textarea {
       width: 100%; padding: 9px 12px;
       border: 1px solid var(--border-strong); border-radius: var(--radius);
-      font-size: 14px; font-family: var(--font-body);
+      font-size: 16px; font-family: var(--font-body);
       background: var(--bg-raise); color: var(--text);
       transition: border-color .15s, box-shadow .15s;
     }
@@ -297,7 +297,6 @@
     }
     .errorlist { list-style: none; color: #E08C85; font-size: 13px; margin-top: 4px; }
 
-    /* ─── Messages ────────────────────────────────────── */
     .messages { margin-bottom: 1rem; }
     .message {
       padding: 10px 14px; border-radius: var(--radius); font-size: 14px; margin-bottom: 6px;
@@ -306,11 +305,10 @@
     .message-success { background: rgba(76,124,86,.12); color: #A9D2AF; border-color: var(--ink-green); }
     .message-error   { background: rgba(168,80,74,.12); color: #E8AFAA; border-color: var(--ink-rose); }
 
-    /* ─── Filters ─────────────────────────────────────── */
     .filter-bar { display: flex; gap: 8px; margin-bottom: 1.25rem; flex-wrap: wrap; align-items: center; }
     .filter-bar input[type=text] {
       padding: 7px 12px; border: 1px solid var(--border-strong);
-      border-radius: var(--radius); font-size: 14px; min-width: 200px;
+      border-radius: var(--radius); font-size: 16px; min-width: 200px; flex: 1 1 200px;
       font-family: var(--font-body);
       background: var(--bg-raise); color: var(--text); transition: border-color .15s, box-shadow .15s;
     }
@@ -328,22 +326,18 @@
     .filter-chip:hover { background: var(--surface-2); border-color: var(--brass-line); color: var(--ink); text-decoration: none; }
     .filter-chip.active { background: var(--brass-soft); border-color: var(--brass); color: var(--brass); }
 
-    /* ─── Empty state ─────────────────────────────────── */
     .empty { text-align: center; padding: 3rem 1rem; color: var(--text-dim); }
     .empty-icon { font-size: 36px; margin-bottom: .75rem; opacity: .6; }
     .empty p { font-size: 15px; font-family: var(--font-display); }
 
-    /* ─── Deadline urgency ────────────────────────────── */
     .days-urgent { color: var(--ink-rose); font-weight: 600; font-family: var(--font-mono); }
     .days-soon   { color: var(--ink-amber); font-family: var(--font-mono); }
 
-    /* ─── Score bars ──────────────────────────────────── */
     .score-bar  { height: 5px; background: var(--bg-raise); border-radius: 3px; margin-top: 4px; }
     .score-fill { height: 5px; border-radius: 3px; background: var(--brass); }
     .score-fill-green { background: var(--ink-green); }
     .score-fill-blue  { background: var(--seal-blue); }
 
-    /* ─── Hero (marketing pages) ──────────────────────── */
     .hero {
       position: relative;
       padding: 1.5rem 0 2.5rem;
@@ -381,12 +375,7 @@
       position: absolute; inset: 9px;
       border-radius: 50%; border: 1px solid var(--brass-line);
     }
-    @media (max-width: 640px) {
-      .hero h1 { font-size: 30px; }
-      .hero-stamp { display: none; }
-    }
 
-    /* ─── Prose (long-form marketing copy) ────────────── */
     .prose h2 {
       font-family: var(--font-display); font-weight: 600;
       font-size: 20px; color: var(--ink); letter-spacing: -.01em;
@@ -396,10 +385,9 @@
     .prose p { color: var(--text); line-height: 1.75; margin-bottom: 1rem; }
     .prose p:last-child { margin-bottom: 0; }
 
-    /* ─── Module grid ─────────────────────────────────── */
     .section-heading {
       display: flex; align-items: baseline; justify-content: space-between;
-      gap: 1rem; margin-bottom: 1rem;
+      gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;
     }
     .section-heading h2 {
       font-family: var(--font-display); font-weight: 600;
@@ -412,7 +400,6 @@
       display: grid; grid-template-columns: repeat(2, 1fr);
       gap: 1rem; margin-bottom: 2rem;
     }
-    @media (max-width: 640px) { .module-grid { grid-template-columns: 1fr; } }
     .module-card {
       background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius-lg); padding: 1.25rem 1.4rem;
@@ -432,7 +419,6 @@
     }
     .feature-list li::before { content: '—'; color: var(--brass); flex-shrink: 0; }
 
-    /* ─── CTA banner ───────────────────────────────────── */
     .cta-banner {
       display: flex; align-items: center; justify-content: space-between;
       gap: 1.5rem; flex-wrap: wrap;
@@ -445,11 +431,9 @@
       font-size: 19px; color: var(--ink); margin-bottom: .3rem;
     }
     .cta-banner p { font-size: 13.5px; color: var(--text-dim); }
-    .cta-actions { display: flex; gap: 10px; flex-shrink: 0; }
+    .cta-actions { display: flex; gap: 10px; flex-shrink: 0; flex-wrap: wrap; }
 
-    /* ─── Contact layout ───────────────────────────────── */
     .contact-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.25rem; align-items: start; }
-    @media (max-width: 700px) { .contact-grid { grid-template-columns: 1fr; } }
     .contact-side { display: flex; flex-direction: column; gap: 1rem; }
     .contact-side .card h3 {
       font-family: var(--font-display); font-weight: 600; font-size: 15.5px;
@@ -459,43 +443,171 @@
     .contact-side .card p + p { margin-top: .5rem; }
     .contact-links { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: .5rem; }
     .contact-links li { font-size: 13px; }
-    .contact-links a { font-family: var(--font-mono); font-size: 12.5px; }
+    .contact-links a { font-family: var(--font-mono); font-size: 12.5px; word-break: break-word; }
     .char-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); text-align: right; margin-top: 4px; }
     .char-count.is-near-limit { color: var(--ink-amber); }
+
+    .nav-toggle {
+      display: none;
+      align-items: center; justify-content: center;
+      width: 36px; height: 36px;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      background: var(--surface);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .nav-toggle:hover { border-color: var(--brass-line); background: var(--surface-2); }
+    .nav-toggle-bars {
+      position: relative;
+      width: 16px; height: 11px;
+    }
+    .nav-toggle-bars span {
+      position: absolute; left: 0; width: 100%; height: 1.5px;
+      background: var(--ink); border-radius: 1px;
+      transition: transform .2s ease, opacity .2s ease, top .2s ease;
+    }
+    .nav-toggle-bars span:nth-child(1) { top: 0; }
+    .nav-toggle-bars span:nth-child(2) { top: 5px; }
+    .nav-toggle-bars span:nth-child(3) { top: 10px; }
+    .nav.is-open .nav-toggle-bars span:nth-child(1) { top: 5px; transform: rotate(45deg); }
+    .nav.is-open .nav-toggle-bars span:nth-child(2) { opacity: 0; }
+    .nav.is-open .nav-toggle-bars span:nth-child(3) { top: 5px; transform: rotate(-45deg); }
+
+    .nav-backdrop { display: none; }
+
+    .nav-panel { display: contents; }
+
+    @media (max-width: 860px) {
+      .nav { padding: 0 1rem; }
+      .nav-toggle { display: flex; }
+
+      .nav-panel {
+        display: block;
+        position: fixed;
+        top: 58px; right: 0;
+        width: min(80vw, 300px);
+        max-height: calc(100vh - 58px);
+        overflow-y: auto;
+        background: var(--bg-raise);
+        border-left: 1px solid var(--border-strong);
+        transform: translateX(100%);
+        transition: transform .25s ease;
+        z-index: 21;
+        padding: .5rem 1rem 1.25rem;
+      }
+      .nav.is-open .nav-panel { transform: translateX(0); }
+
+      .nav-links,
+      .nav-user {
+        position: static;
+        width: 100%;
+        height: auto;
+        background: transparent;
+        border: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 0;
+        transform: none;
+        transition: none;
+        overflow: visible;
+      }
+
+      .nav-links a {
+        width: 100%;
+        padding: 12px 10px;
+        font-size: 13.5px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav-user {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding-top: 1rem;
+        margin-top: .5rem;
+      }
+      .nav-user::before {
+        content: 'Account';
+        display: block;
+        font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em;
+        text-transform: uppercase; color: var(--text-faint);
+        padding-bottom: .5rem; border-bottom: 1px solid var(--border-strong);
+        margin-bottom: .25rem;
+      }
+      .user-pill { width: 100%; }
+      .btn-ghost-sm, .btn-brass-sm { text-align: center; width: 100%; }
+
+      .nav-backdrop {
+        display: block;
+        position: fixed; inset: 58px 0 0 0;
+        background: rgba(0,0,0,.45);
+        opacity: 0; pointer-events: none;
+        transition: opacity .25s ease;
+        z-index: 19;
+      }
+      .nav.is-open ~ .nav-backdrop { opacity: 1; pointer-events: auto; }
+    }
+
+    @media (max-width: 700px) {
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .container { padding: 1.25rem 1rem; }
+      .hero h1 { font-size: 30px; max-width: none; }
+      .hero-stamp { display: none; }
+      .module-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; gap: 0; }
+      .page-title { font-size: 22px; }
+      .stat-value { font-size: 27px; }
+      .cta-banner { padding: 1.25rem; }
+      .cta-actions { width: 100%; }
+      .cta-actions .btn { flex: 1 1 auto; justify-content: center; }
+    }
   </style>
 </head>
 <body>
-  <nav class="nav">
+  <nav class="nav" id="site-nav">
     <a href="{% url 'home:home' %}" class="nav-brand" style="text-decoration:none;">NEXA</a>
-    <div class="nav-links">
-      <nav>
+
+    <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-panel">
+      <span class="nav-toggle-bars"><span></span><span></span><span></span></span>
+    </button>
+
+    <div class="nav-panel" id="nav-panel">
+      <div class="nav-links" id="nav-links">
         {% if user.is_authenticated %}
-            <a href="{% url 'extracurricular:campuspulse' %}">Dashboard</a>
-            <a href="{% url 'extracurricular:club_list' %}">Clubs</a>
-            <a href="{% url 'extracurricular:volunteer_list' %}">Volunteering</a>
-            <a href="{% url 'extracurricular:impact_list' %}">Impact Journal</a>
-            <a href="{% url 'extracurricular:event_list' %}">Events</a>
+          <a href="{% url 'extracurricular:campuspulse' %}" {% if request.resolver_match.url_name == 'campuspulse' %}class="active"{% endif %}>Dashboard</a>
+          <a href="{% url 'extracurricular:club_list' %}" {% if request.resolver_match.url_name == 'club_list' %}class="active"{% endif %}>Clubs</a>
+          <a href="{% url 'extracurricular:volunteer_list' %}" {% if request.resolver_match.url_name == 'volunteer_list' %}class="active"{% endif %}>Volunteering</a>
+          <a href="{% url 'extracurricular:impact_list' %}" {% if request.resolver_match.url_name == 'impact_list' %}class="active"{% endif %}>Impact Journal</a>
+          <a href="{% url 'extracurricular:event_list' %}" {% if request.resolver_match.url_name == 'event_list' %}class="active"{% endif %}>Events</a>
         {% endif %}
-      </nav>
+      </div>
+
+      <div class="nav-user" id="nav-user">
+        {% if user.is_authenticated %}
+          <a href="{% url 'profile' %}" class="user-pill">
+            <div class="avatar-circle avatar-sm">
+              {% if request.user.profile.photo %}
+                <img src="{{ request.user.profile.photo.url }}" alt="">
+              {% else %}
+                {{ request.user.username|slice:":1"|upper }}
+              {% endif %}
+            </div>
+            <span class="user-name">{{ request.user.username }}</span>
+          </a>
+          <a href="{% url 'logout' %}" class="btn-ghost-sm">Log out</a>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn-ghost-sm">Log in</a>
+          <a href="{% url 'register' %}" class="btn-brass-sm">Sign up</a>
+        {% endif %}
+      </div>
     </div>
-    <div class="nav-user">
-      {% if user.is_authenticated %}
-        <a href="{% url 'profile' %}" class="user-pill">
-          <div class="avatar-circle avatar-sm">
-            {% if request.user.profile.photo %}
-              <img src="{{ request.user.profile.photo.url }}" alt="">
-            {% else %}
-              {{ request.user.username|slice:":1"|upper }}
-            {% endif %}
-          </div>
-          <span class="user-name">{{ request.user.username }}</span>
-        </a>
-        <a href="{% url 'logout' %}" class="btn-ghost-sm">Log out</a>
-      {% else %}
-        <a href="{% url 'login' %}" class="btn-ghost-sm">Log in</a>
-        <a href="{% url 'register' %}" class="btn-brass-sm">Sign up</a>
-      {% endif %}
-    </div>
+
+    <div class="nav-backdrop" id="nav-backdrop"></div>
   </nav>
 
   <div class="container">
@@ -508,5 +620,42 @@
     {% endif %}
     {% block content %}{% endblock %}
   </div>
+
+  <script>
+    (function () {
+      var nav = document.getElementById('site-nav');
+      var toggle = document.getElementById('nav-toggle');
+      var backdrop = document.getElementById('nav-backdrop');
+      if (!nav || !toggle) return;
+
+      function closeMenu() {
+        nav.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+      function openMenu() {
+        nav.classList.add('is-open');
+        toggle.setAttribute('aria-expanded', 'true');
+      }
+      function toggleMenu() {
+        if (nav.classList.contains('is-open')) closeMenu();
+        else openMenu();
+      }
+
+      toggle.addEventListener('click', toggleMenu);
+      if (backdrop) backdrop.addEventListener('click', closeMenu);
+
+      nav.querySelectorAll('.nav-links a, .nav-user a').forEach(function (el) {
+        el.addEventListener('click', closeMenu);
+      });
+
+      window.addEventListener('resize', function () {
+        if (window.innerWidth > 860) closeMenu();
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeMenu();
+      });
+    })();
+  </script>
 </body>
 </html>
