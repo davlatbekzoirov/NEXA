@@ -605,11 +605,6 @@
           <a href="{% url 'smart_study:smart_study' %}" {% if request.resolver_match.url_name == 'smart_study' %}class="active"{% endif %}>SmartStudy</a>
           <a href="{% url 'extracurricular:campuspulse' %}" {% if request.resolver_match.url_name == 'campuspulse' %}class="active"{% endif %}>CampusPulse</a>
           <a href="{% url 'budget:budget' %}" {% if request.resolver_match.url_name == 'budget' %}class="active"{% endif %}>CampusCribs</a>
-
-          <a href="{% url 'home:about' %}" {% if request.resolver_match.url_name == 'about' %}class="active"{% endif %}>About</a>
-          <a href="{% url 'home:features' %}" {% if request.resolver_match.url_name == 'features' %}class="active"{% endif %}>Features</a>
-          <a href="{% url 'home:help' %}" {% if request.resolver_match.url_name == 'help' %}class="active"{% endif %}>Help</a>
-          <a href="{% url 'home:contact' %}" {% if request.resolver_match.url_name == 'contact' %}class="active"{% endif %}>Contact</a>
         {% else %}
           <a href="{% url 'home:about' %}" {% if request.resolver_match.url_name == 'about' %}class="active"{% endif %}>About</a>
           <a href="{% url 'home:features' %}" {% if request.resolver_match.url_name == 'features' %}class="active"{% endif %}>Features</a>

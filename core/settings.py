@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'extracurricular',
     'budget',
     'housing',
+    'roomieratio'
 ]
 
 MIDDLEWARE = [

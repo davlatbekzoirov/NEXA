@@ -1,0 +1,30 @@
+{% extends 'base/campuscrbs_base.html' %}
+{% block title %}Setup Household · NEXA{% endblock %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 4rem auto 0 auto;">
+    <div class="card" style="text-align: center; padding: 2.5rem 2rem;">
+        <div class="empty-icon">🏠</div>
+        <h2 class="page-title" style="margin-bottom: 0.5rem; justify-content: center; display: flex;">No Household Found</h2>
+        <p class="text-muted" style="margin-bottom: 2rem;">To access the RoomieRatio Debt Matrix and Gamified Chore Wheels, you need to join an existing flat ledger or spin up a new home workspace.</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="create_house" value="1">
+            <div class="form-group" style="text-align: left;">
+                <label for="house_name">Household Group Name</label>
+                <input type="text" id="house_name" name="name" placeholder="e.g., Apartment 4B, The Crib" required autocomplete="off">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 0.5rem;">
+                Create Household Workspace
+            </button>
+        </form>
+
+        <hr class="divider">
+
+        <p class="text-muted" style="font-size: 13px;">
+            Have an invite code from a flatmate? Ask them for the token string to link your accounts together via the Admin dashboard.
+        </p>
+    </div>
+</div>
+{% endblock %}

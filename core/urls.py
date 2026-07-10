@@ -12,4 +12,5 @@ urlpatterns = [
     path('extracurricular/', include('extracurricular.urls')),
     path('budget/', include('budget.urls')),
     path('housing/', include('housing.urls')),
+    path('roomieratio/', include('roomieratio.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

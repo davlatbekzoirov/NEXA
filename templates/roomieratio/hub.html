@@ -1,0 +1,100 @@
+{% extends 'base/campuscrbs_base.html' %}
+{% block title %}RoomieRatio Hub · NEXA{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">{{ household.name }} Workspace</h1>
+    <span class="badge badge-upcoming">Invite Token: {{ household.invite_code }}</span>
+</div>
+
+<div class="form-row" style="margin-bottom: 2rem;">
+    <div class="card">
+        <h3 class="card-title">The Debt Simplifier Matrix</h3>
+        <p class="text-muted" style="margin-bottom: 1rem;">Calculated minimum transactions required to square up balances:</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            {% for debt in simplified_debts %}
+            <div class="flex-between" style="padding: 10px; background: rgba(255,255,255,0.02); border-radius: 8px; border-left: 3px solid #7F77DD;">
+                <span style="font-size: 14px;">
+                    <strong>{{ debt.from_user.username }}</strong> owes <strong>{{ debt.to_user.username }}</strong>
+                </span>
+                <span class="badge badge-urgent" style="font-weight: 700;">${{ debt.amount }}</span>
+            </div>
+            {% empty %}
+            <div class="empty" style="padding: 1rem 0;">
+                <p>🎉 All roomie bills are completely settled!</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <hr class="divider">
+        
+        <h4 class="form-section-title">Log Shared Utility / Grocery Bill</h4>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="add_expense" value="1">
+            <div class="form-group">
+                <input type="text" name="title" placeholder="e.g., Monthly Fiber Internet" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <input type="number" step="0.01" name="total_amount" placeholder="Total Cost ($)" required>
+                </div>
+                <div class="form-group">
+                    <select name="split_type">
+                        <option value="EQUAL">Split Equally Among All</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success btn-sm" style="width: 100%; justify-content: center;">Post to Household Ledger</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">Chore Wheel Rotation</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Chore Task</th>
+                        <th>Assigned Roomie</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for chore in chores %}
+                    <tr>
+                        <td><strong>{{ chore.title }}</strong></td>
+                        <td>{{ chore.assigned_to.username }}</td>
+                        <td>
+                            {% if chore.is_completed %}
+                                <span class="badge badge-graded">Clean Verified</span>
+                            {% else %}
+                                <span class="badge badge-urgent">Pending Proof</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-muted" style="text-align: center; padding: 2rem 0;">No active chore wheels generated yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <hr class="divider">
+        <h3 class="card-title">Roomie Standings</h3>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            {% for user, net in raw_balances %}
+            <div class="flex-between" style="font-size: 13px;">
+                <span>{{ user.username }}</span>
+                <span style="font-weight: 600; color: {% if net >= 0 %}#1D9E75{% else %}#E24B4A{% endif %};">
+                    {% if net >= 0 %}+{% endif %}${{ net|floatformat:2 }}
+                </span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
