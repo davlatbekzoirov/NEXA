@@ -1,6 +1,6 @@
 # NEXA
 
-NEXA is a Django web app that helps students manage university applications, coursework, extracurricular life, housing, and personal budgeting — all in one place.
+NEXA is a Django web app that helps students manage university applications, coursework, extracurricular life, housing, roommate finances, and personal budgeting — all in one place.
 
 ## Features
 
@@ -51,6 +51,12 @@ NEXA is a Django web app that helps students manage university applications, cou
 - Track student housing/dorm search as a pipeline, from shortlisting through application and move-in
 - Dedicated pipeline view (`housing/pipeline.html`) for managing housing options alongside university applications
 
+### RoomieRatio
+- Manage shared households with roommates and split costs fairly
+- Central hub view for an active household (`roomieratio/hub.html`)
+- Fallback/onboarding view when a user isn't part of a household yet (`roomieratio/no_household.html`)
+- Shared helper logic for ratio/split calculations (`roomieratio/utils.py`)
+
 ### Budget
 - Personal budget dashboard for tracking finances alongside applications and school costs
 
@@ -80,6 +86,8 @@ smart_study/       Courses, assignments, grades, scheduler, study groups,
 extracurricular/   Clubs, events, volunteering, impact tracking, public
                    portfolio, resume generator, Campus Pulse feed
 housing/           Student housing/dorm pipeline tracking
+roomieratio/       Shared household management and cost/ratio splitting
+                   between roommates
 budget/            Personal budget dashboard
 templates/         HTML templates, organized by app
 static/            Static assets (favicon, etc.)
@@ -146,6 +154,10 @@ From a document's detail page, you can generate a time-limited link (1–30 days
 ## Public portfolio
 
 Extracurricular activity (clubs, events, volunteer work, and impact) can be published to a public, shareable portfolio page, with settings to control what's visible.
+
+## RoomieRatio
+
+RoomieRatio helps students living with roommates track shared expenses and split costs by a configurable ratio. New users without a household see an onboarding prompt; once part of a household, the hub view becomes the central place to manage shared costs.
 
 ## License
 
