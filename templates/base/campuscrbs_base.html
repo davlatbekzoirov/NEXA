@@ -581,6 +581,7 @@
         {% if user.is_authenticated %}
           <a href="{% url 'budget:budget' %}" {% if request.resolver_match.url_name == 'budget' %}class="active"{% endif %}>Student Ledger</a>
           <a href="{% url 'housing:pipeline' %}" {% if request.resolver_match.url_name == 'pipeline' %}class="active"{% endif %}>Housing Tracker</a>
+          <a href="{% url 'roomieratio:hub' %}" {% if request.resolver_match.url_name == 'roomieratio:hub' %}class="active"{% endif %}>RoomieRatio</a>
         {% endif %}
       </div>
 
