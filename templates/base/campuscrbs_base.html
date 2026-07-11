@@ -47,6 +47,8 @@
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+      #bg-canvas { display: none; }
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
     }
 
     html { -webkit-text-size-adjust: 100%; }
@@ -67,6 +69,31 @@
 
     img { max-width: 100%; height: auto; }
 
+    /* ─── Ambient background canvas ──────────────────────
+       Slow-drifting soft color blobs, in the spirit of the
+       paper.design mesh-gradient shaders, done in a plain
+       2D canvas so there's zero external dependency. Sits
+       behind everything, very low opacity, ignored entirely
+       under prefers-reduced-motion. ─────────────────────── */
+    #bg-canvas {
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      z-index: 0; pointer-events: none;
+      opacity: .55;
+    }
+    .nav, .container { position: relative; z-index: 1; }
+
+    /* ─── Scroll reveal ───────────────────────────────────
+       Elements start faded/offset, and settle into place
+       once they enter the viewport (IntersectionObserver
+       toggles .is-visible below). ─────────────────────── */
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1);
+      transition-delay: var(--reveal-delay, 0ms);
+    }
+    [data-reveal].is-visible { opacity: 1; transform: translateY(0); }
+
     /* ─── Nav ─────────────────────────────────────────── */
     .nav {
       background: linear-gradient(180deg, var(--bg-raise), var(--bg-raise) 96%, rgba(0,0,0,.08));
@@ -82,7 +109,9 @@
       font-size: 17px; font-weight: 600; color: var(--ink);
       display: flex; align-items: center; gap: 10px; letter-spacing: -.01em;
       flex-shrink: 0;
+      transition: color .2s ease;
     }
+    .nav-brand:hover { color: var(--brass); }
     .nav-brand::before {
       content: '';
       width: 24px; height: 24px; border-radius: 50%;
@@ -92,7 +121,9 @@
       border: 1.5px solid var(--brass);
       box-shadow: inset 0 0 0 3px var(--bg-raise), inset 0 0 0 4px var(--brass-line);
       flex-shrink: 0;
+      transition: transform .5s cubic-bezier(.16,1,.3,1);
     }
+    .nav-brand:hover::before { transform: rotate(90deg); }
     .nav-links { display: flex; gap: 2px; align-items: center; }
     .nav-links a {
       font-family: var(--font-mono);
@@ -100,9 +131,19 @@
       letter-spacing: .02em;
       color: var(--text-dim); transition: all .15s;
       white-space: nowrap;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute; left: 12px; right: 12px; bottom: 2px;
+      height: 1px; background: var(--brass);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .25s ease;
     }
     .nav-links a:hover { background: var(--surface-2); color: var(--ink); text-decoration: none; }
+    .nav-links a:hover::after { transform: scaleX(1); }
     .nav-links a.active { background: var(--brass-soft); color: var(--brass); }
+    .nav-links a.active::after { transform: scaleX(0); }
     .nav-user { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
     .user-pill {
@@ -180,7 +221,9 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-left: 3px solid var(--brass);
+      transition: transform .2s ease, box-shadow .2s ease;
     }
+    .stat:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,.28); }
     .stat-purple { border-left-color: var(--ink-indigo); }
     .stat-teal   { border-left-color: var(--ink-green); }
     .stat-amber  { border-left-color: var(--ink-amber); }
@@ -206,6 +249,7 @@
       white-space: nowrap;
     }
     td { padding: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; color: var(--text); }
+    tr { transition: background .15s ease; }
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: var(--surface-2); }
 
@@ -238,9 +282,22 @@
       cursor: pointer; border: 1px solid transparent;
       transition: transform .12s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
       text-decoration: none;
+      position: relative; overflow: hidden;
     }
     .btn:hover { text-decoration: none; transform: translateY(-1px); }
     .btn:active { transform: translateY(0); }
+
+    /* Subtle diagonal shine sweep on hover, common in modern UI kits */
+    .btn::before {
+      content: '';
+      position: absolute; top: 0; left: -60%;
+      width: 40%; height: 100%;
+      background: linear-gradient(115deg, transparent, rgba(255,255,255,.35), transparent);
+      transform: skewX(-20deg);
+      transition: left .55s ease;
+      pointer-events: none;
+    }
+    .btn:hover::before { left: 130%; }
 
     .btn-primary {
       background: var(--brass);
@@ -248,7 +305,7 @@
       font-weight: 600;
       box-shadow: inset 0 1px 0 rgba(255,255,255,.25);
     }
-    .btn-primary:hover { background: #D9AF42; }
+    .btn-primary:hover { background: #D9AF42; box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 6px 16px rgba(203,162,63,.25); }
 
     .btn-success {
       background: var(--ink-green);
@@ -347,8 +404,8 @@
     .days-soon   { color: var(--ink-amber); font-family: var(--font-mono); }
 
     /* ─── Score bars ──────────────────────────────────── */
-    .score-bar  { height: 5px; background: var(--bg-raise); border-radius: 3px; margin-top: 4px; }
-    .score-fill { height: 5px; border-radius: 3px; background: var(--brass); }
+    .score-bar  { height: 5px; background: var(--bg-raise); border-radius: 3px; margin-top: 4px; overflow: hidden; }
+    .score-fill { height: 5px; border-radius: 3px; background: var(--brass); transition: width 1s cubic-bezier(.16,1,.3,1); }
     .score-fill-green { background: var(--ink-green); }
     .score-fill-blue  { background: var(--seal-blue); }
 
@@ -384,11 +441,16 @@
       font-family: var(--font-mono); font-size: 9px; color: var(--brass);
       text-align: center; text-transform: uppercase; letter-spacing: .05em;
       line-height: 1.5; opacity: .85;
+      animation: stamp-spin-in .8s cubic-bezier(.16,1,.3,1);
     }
     .hero-stamp::before {
       content: '';
       position: absolute; inset: 9px;
       border-radius: 50%; border: 1px solid var(--brass-line);
+    }
+    @keyframes stamp-spin-in {
+      from { opacity: 0; transform: rotate(35deg) scale(.7); }
+      to   { opacity: .85; transform: rotate(-9deg) scale(1); }
     }
 
     /* ─── Prose (long-form marketing copy) ────────────── */
@@ -435,6 +497,26 @@
       display: flex; align-items: baseline; gap: 8px;
     }
     .feature-list li::before { content: '—'; color: var(--brass); flex-shrink: 0; }
+
+    /* ─── Spotlight hover (cursor-tracking glow) ──────────
+       A soft radial highlight follows the pointer across the
+       card, in the style of the "spotlight card" pattern seen
+       across most modern component libraries. Pure CSS +
+       ~10 lines of JS to update --mx/--my (see script below). */
+    .spotlight-card {
+      position: relative;
+      --mx: 50%; --my: 50%;
+    }
+    .spotlight-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(280px circle at var(--mx) var(--my), var(--brass-soft), transparent 70%);
+      opacity: 0;
+      transition: opacity .3s ease;
+      pointer-events: none;
+    }
+    .spotlight-card:hover::before { opacity: 1; }
 
     /* ─── CTA banner ───────────────────────────────────── */
     .cta-banner {
@@ -542,6 +624,7 @@
         font-size: 13.5px;
         border-bottom: 1px solid var(--border);
       }
+      .nav-links a::after { display: none; }
 
       .nav-user {
         flex-direction: column;
@@ -591,6 +674,8 @@
   </style>
 </head>
 <body>
+  <canvas id="bg-canvas"></canvas>
+
   <nav class="nav" id="site-nav">
     <a href="{% url 'home:home' %}" class="nav-brand" style="text-decoration:none;">NEXA</a>
 
@@ -674,6 +759,98 @@
 
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') closeMenu();
+      });
+    })();
+  </script>
+
+  
+  <script>
+    /* ── Ambient mesh-style background ──────────────────
+       Handful of soft, blurred, slow-drifting radial blobs
+       in the site's own brass / green / seal-blue palette.
+       Zero dependencies, ~40 lines, and skipped entirely
+       for prefers-reduced-motion (see CSS above). */
+    (function () {
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var canvas = document.getElementById('bg-canvas');
+      if (!canvas || reduceMotion) return;
+      var ctx = canvas.getContext('2d');
+      var w, h, dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      function resize() {
+        w = canvas.width = window.innerWidth * dpr;
+        h = canvas.height = window.innerHeight * dpr;
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      var blobs = [
+        { color: '203,162,63',  rx: .22, ry: .18, sx: 0.00007, sy: 0.00011, ph: 0 },
+        { color: '76,124,86',   rx: .70, ry: .30, sx: 0.00009, sy: 0.00006, ph: 2 },
+        { color: '92,135,160',  rx: .45, ry: .75, sx: 0.00006, sy: 0.00008, ph: 4 },
+      ];
+
+      function frame(t) {
+        ctx.clearRect(0, 0, w, h);
+        blobs.forEach(function (b) {
+          var x = (b.rx + Math.sin(t * b.sx + b.ph) * .12) * w;
+          var y = (b.ry + Math.cos(t * b.sy + b.ph) * .12) * h;
+          var r = Math.max(w, h) * .38;
+          var grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+          grad.addColorStop(0, 'rgba(' + b.color + ',0.16)');
+          grad.addColorStop(1, 'rgba(' + b.color + ',0)');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, w, h);
+        });
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    })();
+
+    /* ── Scroll reveal ───────────────────────────────────
+       Any element with [data-reveal] fades/slides into place
+       the first time it enters the viewport. Optional
+       data-reveal-delay="120" (ms) staggers groups of items. */
+    (function () {
+      var els = document.querySelectorAll('[data-reveal]');
+      if (!els.length) return;
+
+      if (!('IntersectionObserver' in window)) {
+        els.forEach(function (el) { el.classList.add('is-visible'); });
+        return;
+      }
+
+      els.forEach(function (el) {
+        var delay = el.getAttribute('data-reveal-delay');
+        if (delay) el.style.setProperty('--reveal-delay', delay + 'ms');
+      });
+
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+      els.forEach(function (el) { io.observe(el); });
+    })();
+
+    /* ── Spotlight hover ─────────────────────────────────
+       Updates --mx/--my on .spotlight-card elements so the
+       CSS radial-gradient glow follows the cursor. */
+    (function () {
+      var cards = document.querySelectorAll('.spotlight-card');
+      if (!cards.length) return;
+      cards.forEach(function (card) {
+        card.addEventListener('mousemove', function (e) {
+          var rect = card.getBoundingClientRect();
+          card.style.setProperty('--mx', (e.clientX - rect.left) + 'px');
+          card.style.setProperty('--my', (e.clientY - rect.top) + 'px');
+        });
       });
     })();
   </script>
