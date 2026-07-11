@@ -66,12 +66,30 @@ NEXA is a Django web app that helps students manage university applications, cou
 - Email address changes via a verification-code confirmation step
 - Password change
 
+## Design & UI
+
+The public-facing pages (`home/`, i.e. landing, about, features, help, contact) share a single visual system built in `templates/base/base.html`, using no frontend framework or build step — just CSS custom properties and vanilla JS.
+
+**Theme:** a dark, "ledger and brass" aesthetic — deep green surfaces, cream ink-colored type, brass accents, dashed stamp-style borders, and Fraunces/IBM Plex Sans/Mono for type — meant to feel like a well-kept record book rather than a generic SaaS dashboard.
+
+**Interactive touches, all progressively enhanced and safe under `prefers-reduced-motion`:**
+- **Scroll-reveal** — sections and cards fade/slide into place as they enter the viewport (`data-reveal`, with optional `data-reveal-delay` for staggering groups), via a small shared `IntersectionObserver`
+- **Spotlight hover cards** — a soft glow that follows the cursor across feature/module cards (`.spotlight-card`)
+- **Ambient background** — a lightweight, dependency-free canvas with slow-drifting brass/green/blue gradient blobs behind the nav and page content
+- **Count-up stats** — numeric stat values animate from 0 up to their target the first time they're scrolled into view (`data-count-to="N"` on a `.stat-value`)
+- **Testimonial marquee** — an infinite, seamless-looping row of student comments on the homepage that pauses on hover (currently placeholder quotes — swap in real feedback before launch)
+- **Animated FAQ accordion** — the Help page's native `<details>`/`<summary>` list smoothly animates open/closed height via the Web Animations API instead of snapping, while keeping native keyboard accessibility
+- **Micro-interactions** — animated nav underlines, a spinning brand mark on hover, a diagonal shine sweep on buttons, and a "sending…" spinner state on the contact form's submit button
+
+All of this lives in plain CSS/JS inside `base.html` and each page template, so no npm install or bundler is required to run or extend it.
+
 ## Tech stack
 
 - **Backend:** Django
 - **Async / background tasks:** Celery (see `core/celery.py`, `universities/tasks.py`, `extracurricular/tasks.py`)
 - **Database:** SQLite by default (`db.sqlite3`), swappable via Django settings
 - **Templates:** Django templates (`templates/`), no frontend framework required
+- **Frontend interactivity:** vanilla CSS/JS — CSS custom properties for theming, `IntersectionObserver` for scroll-reveal and count-up animations, and the Web Animations API for the FAQ accordion; no build step, bundler, or JS framework
 
 ## Project structure
 
