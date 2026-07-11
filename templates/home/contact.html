@@ -1,22 +1,22 @@
 {% extends "base/base.html" %}
 {% block title %}Contact · NEXA{% endblock %}
 {% block content %}
-<div class="page-header">
+<div class="page-header" data-reveal>
   <h1 class="page-title">Get in touch</h1>
 </div>
 
 <div class="stat-grid">
-  <div class="stat">
+  <div class="stat" data-reveal data-reveal-delay="0">
     <div class="stat-label">Typical response</div>
     <div class="stat-value" style="font-size:26px;">&lt; 1 day</div>
     <div class="stat-sub">on weekdays</div>
   </div>
-  <div class="stat stat-teal">
+  <div class="stat stat-teal" data-reveal data-reveal-delay="80">
     <div class="stat-label">Bug reports</div>
     <div class="stat-value" style="font-size:20px;">Priority</div>
     <div class="stat-sub">routed straight to engineering</div>
   </div>
-  <div class="stat stat-amber">
+  <div class="stat stat-amber" data-reveal data-reveal-delay="160">
     <div class="stat-label">Common questions</div>
     <div class="stat-value" style="font-size:20px;">Check Help</div>
     <div class="stat-sub">may already be answered</div>
@@ -24,7 +24,7 @@
 </div>
 
 <div class="contact-grid">
-  <div class="card">
+  <div class="card" data-reveal>
     <form method="post" action="" id="contact-form">
       {% csrf_token %}
       <div class="form-row">
@@ -56,12 +56,14 @@
         <div class="char-count" id="char-count">0 / 1000</div>
       </div>
 
-      <button type="submit" class="btn btn-primary">Send message</button>
+      <button type="submit" class="btn btn-primary" id="contact-submit">
+        <span class="btn-label">Send message</span>
+      </button>
     </form>
   </div>
 
   <div class="contact-side">
-    <div class="card">
+    <div class="card spotlight-card" data-reveal data-reveal-delay="100">
       <h3>Before you write in</h3>
       <p>A few of the most common questions are already answered on the Help page — worth a quick look first.</p>
       <ul class="contact-links">
@@ -71,7 +73,7 @@
       </ul>
     </div>
 
-    <div class="card">
+    <div class="card spotlight-card" data-reveal data-reveal-delay="180">
       <h3>Direct lines</h3>
       <p>General &amp; billing<br><a href="mailto:hello@nexa.app">hello@nexa.app</a></p>
       <p>Bugs &amp; technical issues<br><a href="mailto:support@nexa.app">support@nexa.app</a></p>
@@ -79,6 +81,26 @@
     </div>
   </div>
 </div>
+
+<style>
+  /* A small "sending…" state so the button gives feedback the
+     instant the form is submitted, instead of just sitting
+     still until the page navigates away. Purely cosmetic —
+     the actual POST/redirect is untouched. */
+  #contact-submit { position: relative; }
+  #contact-submit.is-sending { pointer-events: none; opacity: .85; }
+  #contact-submit .btn-spinner {
+    display: none;
+    width: 13px; height: 13px;
+    border: 2px solid rgba(26,20,8,.35);
+    border-top-color: #1A1408;
+    border-radius: 50%;
+    animation: contact-spin .6s linear infinite;
+  }
+  #contact-submit.is-sending .btn-spinner { display: inline-block; }
+  #contact-submit.is-sending .btn-label::after { content: '…'; }
+  @keyframes contact-spin { to { transform: rotate(360deg); } }
+</style>
 
 <script>
 (function () {
@@ -90,6 +112,19 @@
     var len = this.value.length;
     counter.textContent = len + ' / ' + limit;
     counter.classList.toggle('is-near-limit', len > limit * 0.9);
+  });
+})();
+
+(function () {
+  var form = document.getElementById('contact-form');
+  var submit = document.getElementById('contact-submit');
+  if (!form || !submit) return;
+  form.addEventListener('submit', function () {
+    if (typeof form.reportValidity === 'function' && !form.reportValidity()) return;
+    submit.classList.add('is-sending');
+    var spinner = document.createElement('span');
+    spinner.className = 'btn-spinner';
+    submit.appendChild(spinner);
   });
 })();
 </script>
