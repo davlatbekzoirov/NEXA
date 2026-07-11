@@ -7,7 +7,10 @@
   .faq-count {
     font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint);
   }
-  .faq-item { border-bottom: 1px solid var(--border); padding: 15px 0; }
+  .faq-item {
+    border-bottom: 1px solid var(--border); padding: 15px 0;
+    overflow: hidden; /* required for the height animation below */
+  }
   .faq-item:first-child { padding-top: 2px; }
   .faq-item:last-child { border-bottom: none; padding-bottom: 2px; }
   .faq-item summary.faq-q {
@@ -20,29 +23,33 @@
   .faq-item summary.faq-q::after {
     content: '+'; flex-shrink: 0;
     font-family: var(--font-mono); font-size: 17px; color: var(--brass);
-    transition: transform .15s ease;
+    display: inline-block;
+    transition: transform .25s cubic-bezier(.16,1,.3,1);
   }
-  .faq-item[open] summary.faq-q::after { content: '\2212'; }
+  .faq-item[open] summary.faq-q::after { content: '+'; transform: rotate(135deg); }
   .faq-item:hover summary.faq-q { color: var(--brass); }
   .faq-a {
     margin-top: 10px; color: var(--text-dim);
     font-size: 13.5px; line-height: 1.7; max-width: 62ch;
+    opacity: 0;
+    transition: opacity .2s ease;
   }
+  .faq-item[open] .faq-a { opacity: 1; transition-delay: .08s; }
   .faq-a a { color: var(--brass); }
 
   #faq-empty { display: none; }
 </style>
 
-<div class="page-header">
+<div class="page-header" data-reveal>
   <h1 class="page-title">Help &amp; FAQ</h1>
   <span class="faq-count" id="faq-count">6 entries</span>
 </div>
 
-<div class="filter-bar">
+<div class="filter-bar" data-reveal>
   <input type="text" id="faq-search" placeholder="Search the FAQ…" aria-label="Search the FAQ">
 </div>
 
-<div class="card" id="faq-list">
+<div class="card" id="faq-list" data-reveal>
   <details class="faq-item">
     <summary class="faq-q">Do I need one account for every module?</summary>
     <div class="faq-a">Yes — a single sign-up gives you access to your grades, budget, involvement log, and application tracker under one profile.</div>
@@ -73,6 +80,94 @@
   <div class="empty-icon">§</div>
   <p>No matching questions. Try the <a href="{% url 'home:contact' %}">Contact</a> page instead.</p>
 </div>
+
+<script>
+/* ── Animated accordion ───────────────────────────────────
+   Native <details>/<summary> gives free accessibility and
+   keyboard support, but browsers snap it open/closed with no
+   transition. This intercepts the click, measures the target
+   height, and animates it with the Web Animations API before
+   actually toggling the `open` attribute — a standard pattern
+   for animating <details> smoothly without losing semantics. */
+(function () {
+  function Accordion(details) {
+    this.details = details;
+    this.summary = details.querySelector('summary');
+    this.content = details.querySelector('.faq-a');
+    this.animation = null;
+    this.isClosing = false;
+    this.isExpanding = false;
+    var self = this;
+    this.summary.addEventListener('click', function (e) { self.onClick(e); });
+  }
+
+  Accordion.prototype.onClick = function (e) {
+    e.preventDefault();
+    this.details.style.overflow = 'hidden';
+    if (this.isClosing || !this.details.open) {
+      this.open();
+    } else if (this.isExpanding || this.details.open) {
+      this.shrink();
+    }
+  };
+
+  Accordion.prototype.shrink = function () {
+    this.isClosing = true;
+    var startHeight = this.details.offsetHeight + 'px';
+    var endHeight = this.summary.offsetHeight + 'px';
+    if (this.animation) this.animation.cancel();
+    var self = this;
+    this.animation = this.details.animate(
+      { height: [startHeight, endHeight] },
+      { duration: 260, easing: 'cubic-bezier(.16,1,.3,1)' }
+    );
+    this.animation.onfinish = function () { self.onAnimationFinish(false); };
+    this.animation.oncancel = function () { self.isClosing = false; };
+  };
+
+  Accordion.prototype.open = function () {
+    this.details.style.height = this.details.offsetHeight + 'px';
+    this.details.open = true;
+    var self = this;
+    window.requestAnimationFrame(function () { self.expand(); });
+  };
+
+  Accordion.prototype.expand = function () {
+    this.isExpanding = true;
+    var startHeight = this.details.offsetHeight + 'px';
+    var endHeight = (this.summary.offsetHeight + this.content.offsetHeight + 10) + 'px';
+    if (this.animation) this.animation.cancel();
+    var self = this;
+    this.animation = this.details.animate(
+      { height: [startHeight, endHeight] },
+      { duration: 260, easing: 'cubic-bezier(.16,1,.3,1)' }
+    );
+    this.animation.onfinish = function () { self.onAnimationFinish(true); };
+    this.animation.oncancel = function () { self.isExpanding = false; };
+  };
+
+  Accordion.prototype.onAnimationFinish = function (open) {
+    this.details.open = open;
+    this.animation = null;
+    this.isClosing = false;
+    this.isExpanding = false;
+    this.details.style.height = '';
+    this.details.style.overflow = '';
+  };
+
+  var supportsAnimate = typeof Element !== 'undefined' && !!Element.prototype.animate;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (supportsAnimate && !reduceMotion) {
+    document.querySelectorAll('.faq-item').forEach(function (el) {
+      new Accordion(el);
+    });
+  }
+  /* If WAAPI isn't available or motion is reduced, native
+     <details> behavior (instant open/close) still works fine —
+     nothing extra to wire up. */
+})();
+</script>
 
 <script>
 (function () {
