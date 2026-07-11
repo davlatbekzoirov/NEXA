@@ -861,6 +861,51 @@
         });
       });
     })();
+
+    /* ── Count-up numbers ─────────────────────────────────
+       Any element with data-count-to="N" ticks up from 0 to
+       N the first time it scrolls into view. Non-numeric
+       stats (e.g. "24/7") simply don't get this attribute
+       and are left alone. Skipped instantly under
+       prefers-reduced-motion. */
+    (function () {
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var els = document.querySelectorAll('[data-count-to]');
+      if (!els.length) return;
+
+      function run(el) {
+        var target = parseFloat(el.getAttribute('data-count-to'));
+        if (isNaN(target)) return;
+        if (reduceMotion) { el.textContent = target; return; }
+
+        var duration = 900;
+        var start = null;
+        function step(ts) {
+          if (start === null) start = ts;
+          var progress = Math.min((ts - start) / duration, 1);
+          var eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+          el.textContent = Math.round(eased * target);
+          if (progress < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+
+      if (!('IntersectionObserver' in window)) {
+        els.forEach(run);
+        return;
+      }
+
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            run(entry.target);
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.4 });
+
+      els.forEach(function (el) { io.observe(el); });
+    })();
   </script>
 </body>
 </html>
