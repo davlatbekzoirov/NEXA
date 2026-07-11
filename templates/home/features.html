@@ -1,27 +1,27 @@
 {% extends "base/base.html" %}
 {% block title %}Features · NEXA{% endblock %}
 {% block content %}
-<div class="page-header">
+<div class="page-header" data-reveal>
   <h1 class="page-title">What's inside NEXA</h1>
 </div>
 
 <div class="stat-grid">
-  <div class="stat">
+  <div class="stat" data-reveal data-reveal-delay="0">
     <div class="stat-label">Academics</div>
     <div class="stat-value" style="font-size:20px;">SmartStudy</div>
     <div class="stat-sub">Grades, scheduler, Pomodoro, burnout alerts</div>
   </div>
-  <div class="stat stat-teal">
+  <div class="stat stat-teal" data-reveal data-reveal-delay="80">
     <div class="stat-label">Living</div>
     <div class="stat-value" style="font-size:20px;">CampusCribs</div>
     <div class="stat-sub">Budget runway, shared bills, chores, apartments</div>
   </div>
-  <div class="stat stat-amber">
+  <div class="stat stat-amber" data-reveal data-reveal-delay="160">
     <div class="stat-label">Involvement</div>
     <div class="stat-value" style="font-size:20px;">CampusPulse</div>
     <div class="stat-sub">Clubs, volunteer hours, resume bullets</div>
   </div>
-  <div class="stat stat-purple">
+  <div class="stat stat-purple" data-reveal data-reveal-delay="240">
     <div class="stat-label">Applications</div>
     <div class="stat-value" style="font-size:20px;">UniTracker</div>
     <div class="stat-sub">Deadlines, documents, scores, scholarships</div>
@@ -29,7 +29,7 @@
 </div>
 
 <div class="module-grid">
-  <div class="module-card">
+  <div class="module-card spotlight-card" data-reveal data-reveal-delay="0">
     <span class="badge badge-accepted">Academics</span>
     <h3>SmartStudy</h3>
     <p>Everything that turns a syllabus into a plan you actually follow.</p>
@@ -43,7 +43,7 @@
     </ul>
   </div>
 
-  <div class="module-card">
+  <div class="module-card spotlight-card" data-reveal data-reveal-delay="90">
     <span class="badge badge-interview">Living</span>
     <h3>CampusCribs</h3>
     <p>The money and the apartment, tracked with the same rigor as your GPA.</p>
@@ -55,7 +55,7 @@
     </ul>
   </div>
 
-  <div class="module-card">
+  <div class="module-card spotlight-card" data-reveal data-reveal-delay="180">
     <span class="badge badge-reach">Involvement</span>
     <h3>CampusPulse</h3>
     <p>Every hour and every role, logged the moment it happens.</p>
@@ -67,7 +67,7 @@
     </ul>
   </div>
 
-  <div class="module-card">
+  <div class="module-card spotlight-card" data-reveal data-reveal-delay="270">
     <span class="badge badge-submitted">Applications</span>
     <h3>UniTracker</h3>
     <p>Every application managed like a real pipeline, not a hopeful spreadsheet.</p>
@@ -81,7 +81,7 @@
   </div>
 </div>
 
-<div class="cta-banner">
+<div class="cta-banner" data-reveal>
   <div>
     <h3>Ready to see your own ledger?</h3>
     <p>Every module works on its own — open the one you need first.</p>
