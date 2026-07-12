@@ -70,6 +70,39 @@
     {% block content %}{% endblock %}
   </div>
 
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="footer-logo">NEXA</span>
+        <p class="footer-tagline">Everything campus life, in one place.</p>
+      </div>
+
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a href="{% url 'universities:main_uni' %}">UniTracker</a>
+          <a href="{% url 'smart_study:smart_study' %}">SmartStudy</a>
+          <a href="{% url 'extracurricular:campuspulse' %}">CampusPulse</a>
+          <a href="{% url 'budget:budget' %}">CampusCribs</a>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="{% url 'home:about' %}">About</a>
+          <a href="{% url 'home:features' %}">Features</a>
+          <a href="{% url 'home:contact' %}">Contact</a>
+        </div>
+        <div class="footer-col">
+          <h4>Support</h4>
+          <a href="{% url 'home:help' %}">Help Center</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; {% now "Y" %} NEXA. All rights reserved.</span>
+    </div>
+  </footer>
+
   <script>
     (function () {
       var nav = document.getElementById('site-nav');

@@ -660,3 +660,58 @@ tr:hover td { background: var(--surface-2); }
     .cta-actions { width: 100%; }
     .cta-actions .btn { flex: 1 1 auto; justify-content: center; }
 }
+
+
+
+
+.site-footer {
+  position: relative;
+  z-index: 1;
+  margin-top: 4rem;
+  padding: 3rem 1.5rem 1.5rem;
+  border-top: 1px solid var(--border-strong);
+}
+
+.footer-logo {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.4rem;
+  color: var(--ink);
+}
+
+.footer-tagline {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-dim);
+}
+
+.footer-col h4 {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  margin-bottom: 0.3rem;
+}
+
+.footer-col a {
+  text-decoration: none;
+  color: var(--text-dim);
+  font-size: 0.92rem;
+  transition: color 0.15s ease;
+}
+
+.footer-col a:hover {
+  color: var(--brass);
+  text-decoration: none;
+}
+
+.footer-bottom {
+  max-width: 1100px;
+  margin: 2rem auto 0;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--text-faint);
+  text-align: center;
+}
