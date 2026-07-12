@@ -2,9 +2,13 @@
 
 NEXA is a Django web app that helps students manage university applications, coursework, extracurricular life, housing, roommate finances, and personal budgeting — all in one place.
 
-## Features
+## Modules
 
-### University Applications
+NEXA is organized into four user-facing modules, each backed by one or more Django apps.
+
+### UniTracker
+*(Django app: `universities`)*
+
 - Add universities with type (reach / match / safety), status (preparing, submitted, interview, accepted, rejected, deferred), and deadline
 - Auto-generated application checklists (tasks) per university, tailored to the university type
 - Regenerate checklists at any time without losing custom or in-progress tasks
@@ -29,38 +33,47 @@ NEXA is a Django web app that helps students manage university applications, cou
 - Personal, token-protected iCal feed of application deadlines, subscribable from any calendar app
 - Regenerate the feed token to invalidate the old URL
 
-### Smart Study
+### SmartStudy
+*(Django app: `smart_study`)*
+
 - Course and category management, with assignments tracked per course
-- Grade tracking and analytics on performance over time
+- Grade tracking and analytics on performance over time, including What-If and Target Grade scenarios
 - Study scheduler for planning coursework and sessions
 - Built-in Pomodoro timer for focused study sessions
 - Study groups: create/join groups, group detail pages
 - Social features: friends list and activity
 - Personal analytics dashboard
 
-### Extracurricular
+### CampusPulse
+*(Django app: `extracurricular`)*
+
 - Track clubs, membership, and club details
 - Log events and volunteer work
 - Record impact entries to quantify contributions over time
 - Analytics/insights on extracurricular activity
-- "Campus Pulse" feed for campus-wide activity
+- Campus-wide activity feed
 - Public portfolio page to showcase clubs, events, and volunteer impact, with configurable portfolio settings
 - Auto-generated resume content from tracked activities
 
-### Housing
+### CampusCribs
+*(Django apps: `housing`, `roomieratio`, `budget`)*
+
+**Housing**
 - Track student housing/dorm search as a pipeline, from shortlisting through application and move-in
 - Dedicated pipeline view (`housing/pipeline.html`) for managing housing options alongside university applications
 
-### RoomieRatio
+**RoomieRatio**
 - Manage shared households with roommates and split costs fairly
 - Central hub view for an active household (`roomieratio/hub.html`)
 - Fallback/onboarding view when a user isn't part of a household yet (`roomieratio/no_household.html`)
 - Shared helper logic for ratio/split calculations (`roomieratio/utils.py`)
 
-### Budget
+**Budget**
 - Personal budget dashboard for tracking finances alongside applications and school costs
 
 ### Accounts
+*(Django app: `accounts`)*
+
 - Registration, login/logout
 - Profile editing, including a profile photo
 - Email address changes via a verification-code confirmation step
@@ -80,6 +93,7 @@ The public-facing pages (`home/`, i.e. landing, about, features, help, contact) 
 - **Testimonial marquee** — an infinite, seamless-looping row of student comments on the homepage that pauses on hover (currently placeholder quotes — swap in real feedback before launch)
 - **Animated FAQ accordion** — the Help page's native `<details>`/`<summary>` list smoothly animates open/closed height via the Web Animations API instead of snapping, while keeping native keyboard accessibility
 - **Micro-interactions** — animated nav underlines, a spinning brand mark on hover, a diagonal shine sweep on buttons, and a "sending…" spinner state on the contact form's submit button
+- **Site footer** — brass "ledger stamp" detail, mono-styled link columns anchored to each module's section on the About page, and a dashed badge pill in the footer bottom bar
 
 All of this lives in plain CSS/JS inside `base.html` and each page template, so no npm install or bundler is required to run or extend it.
 
@@ -97,16 +111,16 @@ All of this lives in plain CSS/JS inside `base.html` and each page template, so 
 core/              Project settings, URLs, WSGI/ASGI, Celery config
 accounts/          Authentication, profile, email change, password change
 home/              Marketing/static pages (about, features, help, contact, landing)
-universities/      Application tracking: universities, scholarships, documents,
-                   test scores, application tasks, calendar feed
-smart_study/       Courses, assignments, grades, scheduler, study groups,
-                   friends/social, Pomodoro timer, analytics
-extracurricular/   Clubs, events, volunteering, impact tracking, public
-                   portfolio, resume generator, Campus Pulse feed
-housing/           Student housing/dorm pipeline tracking
-roomieratio/       Shared household management and cost/ratio splitting
-                   between roommates
-budget/            Personal budget dashboard
+universities/      UniTracker — application tracking: universities, scholarships,
+                   documents, test scores, application tasks, calendar feed
+smart_study/       SmartStudy — courses, assignments, grades, scheduler, study
+                   groups, friends/social, Pomodoro timer, analytics
+extracurricular/   CampusPulse — clubs, events, volunteering, impact tracking,
+                   public portfolio, resume generator, campus feed
+housing/           CampusCribs — student housing/dorm pipeline tracking
+roomieratio/       CampusCribs — shared household management and cost/ratio
+                   splitting between roommates
+budget/            CampusCribs — personal budget dashboard
 templates/         HTML templates, organized by app
 static/            Static assets (favicon, etc.)
 media/             User-uploaded files (e.g. profile photos)
@@ -157,7 +171,7 @@ Make sure your broker (e.g. Redis) is running and configured in `core/settings.p
 
 ## Calendar feed
 
-Each user gets a private, token-based iCal URL from **Calendar → Subscribe**, in the form:
+Each user gets a private, token-based iCal URL from **UniTracker → Calendar → Subscribe**, in the form:
 
 ```
 /calendar/<token>.ics
@@ -167,15 +181,15 @@ This can be added to Google Calendar, Apple Calendar, Outlook, etc. as a subscri
 
 ## Document sharing
 
-From a document's detail page, you can generate a time-limited link (1–30 days) that lets anyone with the URL view the document without logging in. Links can be revoked manually and track how many times they've been accessed.
+From a document's detail page in **UniTracker**, you can generate a time-limited link (1–30 days) that lets anyone with the URL view the document without logging in. Links can be revoked manually and track how many times they've been accessed.
 
 ## Public portfolio
 
-Extracurricular activity (clubs, events, volunteer work, and impact) can be published to a public, shareable portfolio page, with settings to control what's visible.
+**CampusPulse** activity (clubs, events, volunteer work, and impact) can be published to a public, shareable portfolio page, with settings to control what's visible.
 
 ## RoomieRatio
 
-RoomieRatio helps students living with roommates track shared expenses and split costs by a configurable ratio. New users without a household see an onboarding prompt; once part of a household, the hub view becomes the central place to manage shared costs.
+Part of **CampusCribs**, RoomieRatio helps students living with roommates track shared expenses and split costs by a configurable ratio. New users without a household see an onboarding prompt; once part of a household, the hub view becomes the central place to manage shared costs.
 
 ## License
 
