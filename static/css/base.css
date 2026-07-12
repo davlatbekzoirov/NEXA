@@ -806,3 +806,12 @@ tr:hover td { background: var(--surface-2); }
   .footer-stamp { display: none; }
   .footer-bottom { flex-direction: column; align-items: flex-start; }
 }
+
+
+html {
+  scroll-behavior: smooth;
+}
+
+.module-card[id] {
+  scroll-margin-top: 80px; /* accounts for sticky nav height (58px) + breathing room */
+}
