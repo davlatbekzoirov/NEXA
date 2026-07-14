@@ -1,61 +1,154 @@
-{% extends 'base/smartstudy_base.html' %}
+{% extends 'base/base.html' %}
 {% block title %}Study Groups · NEXA{% endblock %}
 
 {% block content %}
+<style>
+  /* Page-specific additions only — everything else (card, btn,
+     avatar-circle, spotlight-card, data-reveal) comes from base.css
+     and site.js, kept consistent with the rest of NEXA. */
+
+  .roster-stamp{
+    position:absolute;
+    top:1.1rem;
+    right:1.25rem;
+    width:52px; height:52px;
+    border-radius:50%;
+    border:1.5px solid rgba(203,162,63,.5);
+    display:flex; align-items:center; justify-content:center;
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.55rem;
+    line-height:1.15;
+    letter-spacing:.04em;
+    color:rgba(203,162,63,.85);
+    transform:rotate(-8deg);
+    pointer-events:none;
+  }
+  .card.spotlight-card{ position:relative; }
+
+  .group-row{
+    display:grid;
+    grid-template-columns:1.6fr 1fr auto auto auto;
+    align-items:center;
+    gap:1rem;
+    padding:.85rem 0;
+    border-top:1px solid rgba(0,0,0,.06);
+  }
+  .group-row.no-action{ grid-template-columns:1.6fr 1fr auto auto; }
+  .group-row:first-of-type{ border-top:none; }
+
+  .group-name{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.02rem;
+    text-decoration:none;
+    color:inherit;
+  }
+  .group-name.is-link:hover{ text-decoration:underline; text-underline-offset:3px; }
+
+  .avatar-stack{ display:flex; align-items:center; }
+  .avatar-stack .avatar-circle{
+    margin-left:-8px;
+    border:2px solid var(--card-bg, #fff);
+  }
+  .avatar-stack .avatar-circle:first-child{ margin-left:0; }
+  .avatar-circle.avatar-count{
+    background:rgba(76,124,86,.15);
+    color:rgb(76,124,86);
+  }
+
+  .exam-chip{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.72rem;
+    padding:.3rem .6rem;
+    border-radius:3px;
+    background:rgba(92,135,160,.12);
+    color:rgb(92,135,160);
+    white-space:nowrap;
+  }
+  .exam-chip.is-empty{
+    background:transparent;
+    color:#9a9a9a;
+  }
+
+  @media (max-width:640px){
+    .group-row, .group-row.no-action{
+      grid-template-columns:1fr;
+      row-gap:.35rem;
+    }
+  }
+</style>
+
 <div class="page-header">
   <h1 class="page-title">Study Groups</h1>
   <a href="{% url 'smart_study:group_create' %}" class="btn btn-primary">+ New Group</a>
 </div>
 
-<div class="card">
+<div class="card spotlight-card" data-reveal>
+  <span class="roster-stamp" aria-hidden="true">MY<br>ROSTER</span>
   <div class="card-title">Your Groups</div>
   {% if my_groups %}
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Group</th><th>Course</th><th>Members</th><th>Next Exam</th><th></th></tr></thead>
-        <tbody>
-          {% for group in my_groups %}
-            <tr>
-              <td><a href="{% url 'smart_study:group_detail' group.pk %}">{{ group.name }}</a></td>
-              <td>{{ group.shared_course }}</td>
-              <td>{{ group.members.count }}</td>
-              <td>
-                {% with d=group.consensus_exam_date %}
-                  {% if d %}{{ d }}{% else %}<span class="text-muted">—</span>{% endif %}
-                {% endwith %}
-              </td>
-              <td><a href="{% url 'smart_study:group_detail' group.pk %}" class="btn btn-outline btn-sm">Open</a></td>
-            </tr>
+    {% for group in my_groups %}
+      <div class="group-row">
+        <a href="{% url 'smart_study:group_detail' group.pk %}" class="group-name is-link">{{ group.name }}</a>
+        <span class="text-muted">{{ group.shared_course }}</span>
+        <div class="avatar-stack" title="{{ group.members.count }} member{{ group.members.count|pluralize }}">
+          {% for member in group.members.all|slice:":3" %}
+            <span class="avatar-circle avatar-sm">
+              {% if member.profile.photo %}
+                <img src="{{ member.profile.photo.url }}" alt="">
+              {% else %}
+                {{ member.username|slice:":1"|upper }}
+              {% endif %}
+            </span>
           {% endfor %}
-        </tbody>
-      </table>
-    </div>
+          {% if group.members.count > 3 %}
+            <span class="avatar-circle avatar-sm avatar-count">+{{ group.members.count|add:"-3" }}</span>
+          {% endif %}
+        </div>
+        {% with d=group.consensus_exam_date %}
+          {% if d %}
+            <span class="exam-chip">{{ d }}</span>
+          {% else %}
+            <span class="exam-chip is-empty">no date set</span>
+          {% endif %}
+        {% endwith %}
+        <a href="{% url 'smart_study:group_detail' group.pk %}" class="btn btn-outline btn-sm">Open</a>
+      </div>
+    {% endfor %}
   {% else %}
     <div class="empty" style="padding:1.5rem;">
       <div class="empty-icon">👥</div>
       <p>You haven't joined any groups yet.</p>
+      <a href="{% url 'smart_study:group_create' %}" class="btn btn-primary btn-sm">+ Start one</a>
     </div>
   {% endif %}
 </div>
 
-<div class="card" style="margin-top:1rem;">
+<div class="card spotlight-card" style="margin-top:1rem;" data-reveal data-reveal-delay="100">
   <div class="card-title">Other Groups You Can Join</div>
   {% if other_groups %}
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Group</th><th>Course</th><th>Members</th><th></th></tr></thead>
-        <tbody>
-          {% for group in other_groups %}
-            <tr>
-              <td>{{ group.name }}</td>
-              <td>{{ group.shared_course }}</td>
-              <td>{{ group.members.count }}</td>
-              <td><a href="{% url 'smart_study:group_detail' group.pk %}" class="btn btn-outline btn-sm">View</a></td>
-            </tr>
+    {% for group in other_groups %}
+      <div class="group-row no-action">
+        <span class="group-name">{{ group.name }}</span>
+        <span class="text-muted">{{ group.shared_course }}</span>
+        <div class="avatar-stack" title="{{ group.members.count }} member{{ group.members.count|pluralize }}">
+          {% for member in group.members.all|slice:":3" %}
+            <span class="avatar-circle avatar-sm">
+              {% if member.profile.photo %}
+                <img src="{{ member.profile.photo.url }}" alt="">
+              {% else %}
+                {{ member.username|slice:":1"|upper }}
+              {% endif %}
+            </span>
           {% endfor %}
-        </tbody>
-      </table>
-    </div>
+          {% if group.members.count > 3 %}
+            <span class="avatar-circle avatar-sm avatar-count">+{{ group.members.count|add:"-3" }}</span>
+          {% endif %}
+        </div>
+        <a href="{% url 'smart_study:group_detail' group.pk %}" class="btn btn-outline btn-sm">View</a>
+      </div>
+    {% endfor %}
   {% else %}
     <p class="text-muted">No other groups yet — start one!</p>
   {% endif %}

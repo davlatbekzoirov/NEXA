@@ -1,12 +1,46 @@
-{% extends 'base/smartstudy_base.html' %}
+{% extends 'base/base.html' %}
 {% block title %}Friends · NEXA{% endblock %}
 
 {% block content %}
+<style>
+  /* Page-specific additions only — card, table, btn-*, flex-between,
+     gap-2, and text-muted all come from base.css already. */
+
+  .friend-row{
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+    padding:8px 0;
+    border-bottom:1px solid rgba(255,255,255,.05);
+  }
+  .friend-row:last-of-type{ border-bottom:none; }
+  .friend-row .avatar-circle{ flex:0 0 auto; }
+  .friend-row span.grow{ flex:1; }
+
+  .sent-row{
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+    padding:6px 0;
+    font-size:14px;
+    color:#aaa;
+  }
+
+  tr.is-you{ background: rgba(127,119,221,.08); }
+
+  .rank-cell{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.8rem;
+    color:#8a8a8a;
+    width:1.8rem;
+  }
+</style>
+
 <div class="page-header">
   <h1 class="page-title">Accountability Partners</h1>
 </div>
 
-<div class="card">
+<div class="card spotlight-card" data-reveal>
   <div class="card-title">Add a Friend</div>
   <form method="post" style="display:flex; gap: 10px; align-items: flex-start;">
     {% csrf_token %}
@@ -20,11 +54,18 @@
 </div>
 
 {% if incoming %}
-<div class="card" style="margin-top:1rem;">
+<div class="card spotlight-card" style="margin-top:1rem;" data-reveal data-reveal-delay="80">
   <div class="card-title">Pending Requests</div>
   {% for req in incoming %}
-    <div class="flex-between" style="padding: 8px 0; border-bottom:1px solid rgba(255,255,255,.05);">
-      <span>{{ req.from_user.username }} wants to be accountability partners</span>
+    <div class="friend-row">
+      <span class="avatar-circle avatar-sm">
+        {% if req.from_user.profile.photo %}
+          <img src="{{ req.from_user.profile.photo.url }}" alt="">
+        {% else %}
+          {{ req.from_user.username|slice:":1"|upper }}
+        {% endif %}
+      </span>
+      <span class="grow">{{ req.from_user.username }} wants to be accountability partners</span>
       <div class="gap-2">
         <form method="post" action="{% url 'smart_study:friend_request_respond' req.pk 'accept' %}">
           {% csrf_token %}
@@ -41,25 +82,33 @@
 {% endif %}
 
 {% if outgoing %}
-<div class="card" style="margin-top:1rem;">
+<div class="card spotlight-card" style="margin-top:1rem;" data-reveal data-reveal-delay="100">
   <div class="card-title">Sent Requests</div>
   {% for req in outgoing %}
-    <div style="padding: 6px 0; font-size:14px; color:#aaa;">
-      Waiting on {{ req.to_user.username }}
+    <div class="sent-row">
+      <span class="avatar-circle avatar-sm">
+        {% if req.to_user.profile.photo %}
+          <img src="{{ req.to_user.profile.photo.url }}" alt="">
+        {% else %}
+          {{ req.to_user.username|slice:":1"|upper }}
+        {% endif %}
+      </span>
+      <span>Waiting on {{ req.to_user.username }}</span>
     </div>
   {% endfor %}
 </div>
 {% endif %}
 
-<div class="card" style="margin-top:1rem;">
+<div class="card spotlight-card" style="margin-top:1rem;" data-reveal data-reveal-delay="120">
   <div class="card-title">Weekly Leaderboard</div>
   {% if leaderboard %}
     <div class="table-wrap">
       <table>
-        <thead><tr><th>User</th><th>Weekly Hours</th><th>Streak</th></tr></thead>
+        <thead><tr><th></th><th>User</th><th>Weekly Hours</th><th>Streak</th></tr></thead>
         <tbody>
           {% for entry in leaderboard %}
-            <tr {% if entry.user == request.user %}style="background: rgba(127,119,221,.08);"{% endif %}>
+            <tr {% if entry.user == request.user %}class="is-you"{% endif %}>
+              <td class="rank-cell">{{ forloop.counter }}</td>
               <td>{{ entry.user.username }}{% if entry.user == request.user %} <span class="text-muted">(you)</span>{% endif %}</td>
               <td>{{ entry.weekly_hours }}h</td>
               <td>🔥 {{ entry.streak }} day{{ entry.streak|pluralize }}</td>

@@ -1,7 +1,32 @@
-{% extends 'base/smartstudy_base.html' %}
+{% extends 'base/base.html' %}
 {% block title %}{{ group.name }} · NEXA{% endblock %}
 
 {% block content %}
+<style>
+  /* Page-specific additions only — stat, divider, card, btn-*, and
+     form-section-title all come from base.css already. */
+
+  .member-row{
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+    padding:.5rem 0;
+    border-bottom:1px solid rgba(255,255,255,.05);
+    font-size:14px;
+  }
+  .member-row:last-of-type{ border-bottom:none; }
+  .member-row .avatar-circle{ flex:0 0 auto; }
+
+  .detail-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem;
+  }
+  @media (max-width:760px){
+    .detail-grid{ grid-template-columns:1fr; }
+  }
+</style>
+
 <div class="page-header">
   <h1 class="page-title">{{ group.name }}</h1>
   {% if is_member %}
@@ -12,9 +37,9 @@
   {% endif %}
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+<div class="detail-grid">
 
-  <div class="card">
+  <div class="card spotlight-card" data-reveal>
     <div class="card-title">Course</div>
     <p style="font-size:14px;">{{ group.shared_course }}</p>
 
@@ -50,11 +75,18 @@
     {% endif %}
   </div>
 
-  <div class="card">
+  <div class="card spotlight-card" data-reveal data-reveal-delay="100">
     <div class="card-title">Members ({{ members.count }})</div>
     {% for member in members %}
-      <div style="padding:6px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px;">
-        {{ member.username }}
+      <div class="member-row">
+        <span class="avatar-circle avatar-sm">
+          {% if member.profile.photo %}
+            <img src="{{ member.profile.photo.url }}" alt="">
+          {% else %}
+            {{ member.username|slice:":1"|upper }}
+          {% endif %}
+        </span>
+        <span>{{ member.username }}</span>
       </div>
     {% endfor %}
 
