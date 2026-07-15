@@ -155,6 +155,8 @@ python manage.py createsuperuser
 
 # run the development server
 python manage.py runserver
+
+cp .env.dist .env
 ```
 
 Then visit `http://127.0.0.1:8000/`.
