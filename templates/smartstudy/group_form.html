@@ -1,12 +1,37 @@
-{% extends 'base/smartstudy_base.html' %}
+{% extends 'base/base.html' %}
 {% block title %}New Study Group · NEXA{% endblock %}
 
 {% block content %}
+<style>
+  /* Page-specific additions only — form fields, labels, and buttons
+     keep using base.css's own styling; this just adds the small
+     eyebrow + helper-text touches consistent with the roster page. */
+
+  .form-eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.7rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:rgb(92,135,160);
+    margin:0 0 .3rem;
+  }
+  .form-help{
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:.78rem;
+    color:#8a8a8a;
+    margin-top:.3rem;
+  }
+  .card.form-card{ position:relative; max-width:640px; }
+</style>
+
 <div class="page-header">
-  <h1 class="page-title">Create a Study Group</h1>
+  <div>
+    <p class="form-eyebrow">NEXA · New Entry</p>
+    <h1 class="page-title">Create a Study Group</h1>
+  </div>
 </div>
 
-<div class="card">
+<div class="card form-card spotlight-card" data-reveal>
   <form method="post">
     {% csrf_token %}
     <div class="form-group">
@@ -24,6 +49,7 @@
         <label for="{{ form.shared_course_code.id_for_label }}">Course Code (optional)</label>
         {{ form.shared_course_code }}
         {{ form.shared_course_code.errors }}
+        <p class="form-help">e.g. CS 101 — helps others find the right group.</p>
       </div>
     </div>
     <div class="flex-between">

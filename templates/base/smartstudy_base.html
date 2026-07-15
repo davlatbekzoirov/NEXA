@@ -29,8 +29,6 @@
             <a href="{% url 'smart_study:schedule' %}" {% if request.resolver_match.url_name == 'schedule' %}class="active"{% endif %}>Schedule</a>
             <a href="{% url 'smart_study:pomodoro' %}" {% if request.resolver_match.url_name == 'pomodoro' %}class="active"{% endif %}>Pomodoro</a>
             <a href="{% url 'smart_study:analytics' %}" {% if request.resolver_match.url_name == 'analytics' %}class="active"{% endif %}>Analytics</a>
-            <a href="{% url 'smart_study:group_list' %}" {% if request.resolver_match.url_name == 'group_list' %}class="active"{% endif %}>Groups</a>
-            <a href="{% url 'smart_study:friends' %}" {% if request.resolver_match.url_name == 'friends' %}class="active"{% endif %}>Friends</a>
         {% endif %}
       </div>
 
