@@ -3,6 +3,6 @@ from . import views
 
 app_name = 'roomieratio'
 urlpatterns = [
-    path('hub/', views.household_hub, name='hub'),
-    path('chore/<int:chore_id>/complete/', views.complete_chore, name='complete_chore'),
+    path('hub/', views.HouseholdHubView.as_view(), name='hub'),
+    path('chore/<int:chore_id>/complete/', views.CompleteChoreView.as_view(), name='complete_chore'),
 ]
