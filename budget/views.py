@@ -5,6 +5,7 @@ from django.views import View
 from datetime import date, timedelta
 from .models import LedgerEntry, Category
 
+
 class BudgetDashboardView(LoginRequiredMixin, View):
     def _get_context(self, request):
         user = request.user
@@ -49,6 +50,24 @@ class BudgetDashboardView(LoginRequiredMixin, View):
         return render(request, 'budget/dashboard.html', context)
 
     def post(self, request):
+        if 'add_category' in request.POST:
+            return self._add_category(request)
+
+        return self._add_entry(request)
+
+    def _add_category(self, request):
+        name = request.POST.get('name', '').strip()
+        is_essential = request.POST.get('is_essential') == 'on'
+
+        if name:
+            Category.objects.get_or_create(
+                name=name,
+                defaults={'is_essential': is_essential}
+            )
+
+        return redirect('budget:budget')
+
+    def _add_entry(self, request):
         user = request.user
         title = request.POST.get('title')
         amount = request.POST.get('amount')
@@ -56,5 +75,8 @@ class BudgetDashboardView(LoginRequiredMixin, View):
         category_id = request.POST.get('category')
 
         cat = Category.objects.get(id=category_id) if category_id else None
-        LedgerEntry.objects.create(user=user, title=title, amount=amount, type=entry_type, category=cat)
+        LedgerEntry.objects.create(
+            user=user, title=title, amount=amount,
+            type=entry_type, category=cat
+        )
         return redirect('budget:budget')
