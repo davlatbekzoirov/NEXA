@@ -68,33 +68,69 @@
     </div>
 
     <div class="card">
-        <h3 class="card-title">Recent Running History</h3>
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Category</th>
-                        <th>Value</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for entry in entries %}
-                    <tr>
-                        <td>{{ entry.title }}</td>
-                        <td><span class="text-muted">{{ entry.category.name|default:"Unassigned" }}</span></td>
-                        <td style="font-weight: 600; color: {% if entry.type == 'INCOME' %}#1D9E75{% else %}#E24B4A{% endif %};">
-                            {% if entry.type == 'INCOME' %}+{% else %}-{% endif %}${{ entry.amount }}
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="3" class="text-muted" style="text-align: center;">No ledger transactions registered yet.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <h3 class="card-title">Add Category</h3>
+        <p class="text-muted" style="margin-bottom: 1rem;">Categories tagged "Essential" won't count against your non-essential spending velocity.</p>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="add_category" value="1">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" name="name" required placeholder="e.g., Groceries">
+            </div>
+            <div class="form-group" style="display:flex; align-items:center; gap:8px;">
+                <input type="checkbox" name="is_essential" id="is_essential" checked style="width:auto;">
+                <label for="is_essential" style="margin:0;">Essential spending</label>
+            </div>
+            <button type="submit" class="btn btn-outline" style="width:100%; justify-content:center;">Add Category</button>
+        </form>
+
+        <hr class="divider">
+
+        <h4 class="form-section-title">Existing Categories</h4>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+            {% for cat in categories %}
+            <div class="flex-between" style="font-size:13px;">
+                <span>{{ cat.name }}</span>
+                {% if cat.is_essential %}
+                    <span class="badge badge-safety">Essential</span>
+                {% else %}
+                    <span class="badge badge-urgent">Non-essential</span>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p class="text-muted" style="font-size:13px;">No categories yet — add one above.</p>
+            {% endfor %}
         </div>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 2rem;">
+    <h3 class="card-title">Recent Running History</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                <tr>
+                    <td>{{ entry.title }}</td>
+                    <td><span class="text-muted">{{ entry.category.name|default:"Unassigned" }}</span></td>
+                    <td style="font-weight: 600; color: {% if entry.type == 'INCOME' %}#1D9E75{% else %}#E24B4A{% endif %};">
+                        {% if entry.type == 'INCOME' %}+{% else %}-{% endif %}${{ entry.amount }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-muted" style="text-align: center;">No ledger transactions registered yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}
