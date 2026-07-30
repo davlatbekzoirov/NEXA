@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  {% block extra_head %}{% endblock %}
 </head>
 <body>
   <canvas id="bg-canvas"></canvas>
@@ -29,6 +30,7 @@
           <a href="{% url 'extracurricular:volunteer_list' %}" {% if request.resolver_match.url_name == 'volunteer_list' %}class="active"{% endif %}>Volunteering</a>
           <a href="{% url 'extracurricular:impact_list' %}" {% if request.resolver_match.url_name == 'impact_list' %}class="active"{% endif %}>Impact Journal</a>
           <a href="{% url 'extracurricular:event_list' %}" {% if request.resolver_match.url_name == 'event_list' %}class="active"{% endif %}>Events</a>
+          <a href="{% url 'extracurricular:portfolio_settings' %}" {% if request.resolver_match.url_name == 'portfolio_settings' or request.resolver_match.url_name == 'public_portfolio' %}class="active"{% endif %}>Portfolio</a>
         {% endif %}
       </div>
 
@@ -65,6 +67,8 @@
     {% endif %}
     {% block content %}{% endblock %}
   </div>
+
+  {% block extra_js %}{% endblock %}
 
   <script>
     (function () {
