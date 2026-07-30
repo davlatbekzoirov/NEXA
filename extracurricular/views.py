@@ -75,6 +75,62 @@ def get_or_create_feed_token(user):
     return token
 
 
+def get_analytics_insights(user):
+    """Leadership balance + target-path skill-gap analysis for a user.
+
+    Shared by CampusPulseView (dashboard) and AnalyticsInsightsView
+    (standalone deep-dive page) so the numbers never drift apart.
+    """
+    clubs = Club.objects.filter(user=user)
+
+    total_clubs = clubs.count()
+    leadership_roles_count = 0
+    general_member_count = 0
+
+    for club in clubs:
+        current = club.current_role
+        if current:
+            title = current.title.lower()
+            if any(lead in title for lead in ["president", "chair", "lead", "captain", "secretary", "treasurer", "director"]):
+                leadership_roles_count += 1
+            else:
+                general_member_count += 1
+        else:
+            general_member_count += 1
+
+    leadership_feedback = ""
+    if total_clubs > 3 and leadership_roles_count == 0:
+        leadership_feedback = "You're participating in several spaces! Consider consolidating your energy next semester onto 1 or 2 core clubs where you can seek an executive committee or leadership role."
+    elif leadership_roles_count >= 1:
+        leadership_feedback = "Excellent! You are showing clear leadership experience on your track. Ensure your impact statements outline how you managed tasks or team progress."
+    else:
+        leadership_feedback = "Great start. Look out for project steering groups or sub-committee roles within your clubs to begin adding management credentials to your resume."
+
+    user_skills = Skill.objects.filter(clubs__user=user).values_list("name", flat=True).distinct()
+
+    career_paths = {
+        "Project Management": ["Organization", "Public Speaking", "Budgeting", "Leadership"],
+        "Engineering & Tech": ["Problem Solving", "Teamwork", "Technical Writing", "Time Management"],
+        "Healthcare & Science": ["Empathy", "Critical Thinking", "Communication", "Data Analysis"]
+    }
+
+    path_analysis = {}
+    for path, required_skills in career_paths.items():
+        missing = [skill for skill in required_skills if skill not in user_skills]
+        match_percentage = int(((len(required_skills) - len(missing)) / len(required_skills)) * 100)
+        path_analysis[path] = {
+            "missing": missing,
+            "match_pct": match_percentage
+        }
+
+    return {
+        "leadership_feedback": leadership_feedback,
+        "leadership_count": leadership_roles_count,
+        "member_count": general_member_count,
+        "path_analysis": path_analysis,
+    }
+
+
 class CampusPulseView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
@@ -100,6 +156,7 @@ class CampusPulseView(LoginRequiredMixin, View):
             "next_event": next_event,
             "recent_impacts": recent_impacts,
             "feed_token": get_or_create_feed_token(user).token,
+            **get_analytics_insights(user),
         }
         return render(request, "extracurricular/campuspulse.html", context)
 
@@ -503,56 +560,11 @@ class PortfolioSettingsView(LoginRequiredMixin, View):
 
 
 class AnalyticsInsightsView(LoginRequiredMixin, View):
-    """Evaluates the user's current engagement data and surfaces feedback."""
+    """Standalone deep-dive page — same data now also embedded in the dashboard."""
 
     def get(self, request):
-        user = request.user
-        clubs = Club.objects.filter(user=user)
-
-        total_clubs = clubs.count()
-        leadership_roles_count = 0
-        general_member_count = 0
-
-        for club in clubs:
-            current = club.current_role
-            if current:
-                title = current.title.lower()
-                if any(lead in title for lead in ["president", "chair", "lead", "captain", "secretary", "treasurer", "director"]):
-                    leadership_roles_count += 1
-                else:
-                    general_member_count += 1
-            else:
-                general_member_count += 1
-
-        leadership_feedback = ""
-        if total_clubs > 3 and leadership_roles_count == 0:
-            leadership_feedback = "You're participating in several spaces! Consider consolidating your energy next semester onto 1 or 2 core clubs where you can seek an executive committee or leadership role."
-        elif leadership_roles_count >= 1:
-            leadership_feedback = "Excellent! You are showing clear leadership experience on your track. Ensure your impact statements outline how you managed tasks or team progress."
-        else:
-            leadership_feedback = "Great start. Look out for project steering groups or sub-committee roles within your clubs to begin adding management credentials to your resume."
-
-        user_skills = Skill.objects.filter(clubs__user=user).values_list("name", flat=True).distinct()
-
-        career_paths = {
-            "Project Management": ["Organization", "Public Speaking", "Budgeting", "Leadership"],
-            "Engineering & Tech": ["Problem Solving", "Teamwork", "Technical Writing", "Time Management"],
-            "Healthcare & Science": ["Empathy", "Critical Thinking", "Communication", "Data Analysis"]
-        }
-
-        path_analysis = {}
-        for path, required_skills in career_paths.items():
-            missing = [skill for skill in required_skills if skill not in user_skills]
-            match_percentage = int(((len(required_skills) - len(missing)) / len(required_skills)) * 100)
-            path_analysis[path] = {
-                "missing": missing,
-                "match_pct": match_percentage
-            }
-
-        context = {
-            "leadership_feedback": leadership_feedback,
-            "leadership_count": leadership_roles_count,
-            "member_count": general_member_count,
-            "path_analysis": path_analysis,
-        }
-        return render(request, "extracurricular/analytics_insights.html", context)
+        return render(
+            request,
+            "extracurricular/analytics_insights.html",
+            get_analytics_insights(request.user),
+        )
