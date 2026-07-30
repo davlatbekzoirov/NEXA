@@ -169,7 +169,10 @@ class ClubListView(LoginRequiredMixin, View):
         )
 
         skill_counts = {}
+        active_count = 0
         for club in clubs:
+            if club.is_active:
+                active_count += 1
             for skill in club.skills.all():
                 skill_counts[skill.name] = skill_counts.get(skill.name, 0) + 1
         tag_cloud = sorted(skill_counts.items(), key=lambda x: -x[1])
@@ -177,7 +180,12 @@ class ClubListView(LoginRequiredMixin, View):
         return render(
             request,
             "extracurricular/club_list.html",
-            {"clubs": clubs, "tag_cloud": tag_cloud},
+            {
+                "clubs": clubs,
+                "tag_cloud": tag_cloud,
+                "active_count": active_count,
+                "skill_count": len(skill_counts),
+            },
         )
 
 
