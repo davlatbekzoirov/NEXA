@@ -1,89 +1,354 @@
 {% extends 'base/extracurricular_base.html' %}
 {% block title %}Clubs · NEXA{% endblock %}
-{% block content %}
 
-<div class="page-header">
-  <h1 class="page-title">Club & society role ledger</h1>
-  <a class="btn btn-outline btn-sm" href="{% url 'extracurricular:club_create' %}">+ Add Club</a>
+{% block extra_head %}
+<style>
+  /* ── Page header ─────────────────────────────────── */
+  .clubs-hero {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-strong);
+  }
+  .clubs-hero-copy { flex: 1 1 260px; min-width: 0; }
+  .clubs-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: .65rem;
+  }
+  .clubs-eyebrow::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--brass-line);
+  }
+  .clubs-hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 4vw, 1.75rem);
+    font-weight: 600;
+    letter-spacing: -.02em;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: .35rem;
+  }
+  .clubs-hero-lede {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.55;
+    max-width: 44ch;
+  }
+  .clubs-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-self: center;
+  }
+
+  /* ── Summary stats ───────────────────────────────── */
+  .clubs-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 1.25rem;
+  }
+  .clubs-stat-grid .stat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .stat-icon {
+    font-size: 20px;
+    line-height: 1;
+    opacity: .9;
+    flex-shrink: 0;
+  }
+  .stat-body { min-width: 0; }
+
+  /* ── Shared helpers ──────────────────────────────── */
+  .card-title {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: .85rem;
+  }
+  .text-muted { color: var(--text-dim); font-size: 13.5px; }
+
+  /* ── Skill tag cloud ─────────────────────────────── */
+  .skill-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .skill-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    color: var(--ink-indigo);
+    background: rgba(99,100,160,.12);
+    border: 1px solid rgba(99,100,160,.28);
+    transition: border-color .15s, background .15s, transform .15s;
+  }
+  .skill-tag:hover {
+    background: rgba(99,100,160,.18);
+    border-color: rgba(99,100,160,.4);
+    transform: translateY(-1px);
+  }
+  .skill-tag-count {
+    opacity: .55;
+    font-size: 10.5px;
+  }
+
+  /* ── Club cards grid ─────────────────────────────── */
+  .club-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .club-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .club-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0,0,0,.28);
+  }
+  .club-card.is-inactive { opacity: .82; }
+  .club-card.is-inactive .club-card-name { color: var(--text-dim); }
+
+  .club-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .club-card-name {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.35;
+    text-decoration: none;
+    transition: color .15s;
+  }
+  .club-card-name:hover {
+    color: var(--brass);
+    text-decoration: none;
+  }
+  .badge-inactive {
+    color: var(--text-faint);
+    border-color: var(--border-strong);
+    background: var(--bg-raise);
+    transform: none;
+  }
+
+  .club-card-role {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    color: var(--text);
+  }
+  .club-card-role-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--text-faint);
+    flex-shrink: 0;
+  }
+
+  .club-card-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    min-height: 24px;
+  }
+  .club-card-skills .badge { transform: none; font-size: 10px; }
+
+  .club-card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .club-card-actions .btn { flex: 1; justify-content: center; }
+
+  /* ── Empty state ─────────────────────────────────── */
+  .clubs-empty {
+    text-align: center;
+    padding: 3.5rem 1.5rem;
+  }
+  .clubs-empty-icon {
+    font-size: 42px;
+    margin-bottom: .85rem;
+    opacity: .65;
+  }
+  .clubs-empty h2 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: .4rem;
+  }
+  .clubs-empty p {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 1.25rem;
+    max-width: 36ch;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.55;
+  }
+
+  /* ── Responsive ──────────────────────────────────── */
+  @media (max-width: 860px) {
+    .club-grid { grid-template-columns: 1fr; }
+    .clubs-hero-actions { width: 100%; }
+    .clubs-hero-actions .btn {
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .clubs-stat-grid { grid-template-columns: 1fr; }
+    .club-card-actions { flex-direction: column; }
+    .club-card-actions .btn { width: 100%; }
+  }
+
+  @media (max-width: 400px) {
+    .clubs-hero-actions .btn { flex: 1 1 100%; }
+    .club-card-top {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<header class="clubs-hero" data-reveal>
+  <div class="clubs-hero-copy">
+    <p class="clubs-eyebrow">Involvement</p>
+    <h1>Club & society role ledger</h1>
+    <p class="clubs-hero-lede">Track memberships, leadership roles, and skills across every club you join.</p>
+  </div>
+  <div class="clubs-hero-actions">
+    <a class="btn btn-primary btn-sm" href="{% url 'extracurricular:club_create' %}">+ Add club</a>
+  </div>
+</header>
+
+{% if clubs %}
+<div class="clubs-stat-grid" data-reveal data-reveal-delay="60">
+  <div class="stat stat-purple">
+    <span class="stat-icon" aria-hidden="true">🎭</span>
+    <div class="stat-body">
+      <div class="stat-label">Total clubs</div>
+      <div class="stat-value">{{ clubs|length }}</div>
+      <div class="stat-sub">logged</div>
+    </div>
+  </div>
+  <div class="stat stat-teal">
+    <span class="stat-icon" aria-hidden="true">✓</span>
+    <div class="stat-body">
+      <div class="stat-label">Active now</div>
+      <div class="stat-value">{{ active_count }}</div>
+      <div class="stat-sub">this semester</div>
+    </div>
+  </div>
+  <div class="stat stat-amber">
+    <span class="stat-icon" aria-hidden="true">◆</span>
+    <div class="stat-body">
+      <div class="stat-label">Skills tracked</div>
+      <div class="stat-value">{{ skill_count }}</div>
+      <div class="stat-sub">unique tags</div>
+    </div>
+  </div>
 </div>
+{% endif %}
 
 {% if tag_cloud %}
-<div class="card" style="margin-bottom: 1.25rem;">
-  <p class="card-title">Skill tags</p>
-  <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+<div class="card spotlight-card" style="margin-bottom:1.25rem" data-reveal data-reveal-delay="100">
+  <p class="card-title">Skill tags across clubs</p>
+  <div class="skill-cloud">
     {% for skill, count in tag_cloud %}
-    <span style="font-size: 12px; padding: 4px 10px; border-radius: 20px;
-                 background: rgba(83,74,183,{{ forloop.revcounter0|add:1 }}0.15);
-                 border: 1px solid rgba(127,119,221,.25); color: #AFA9EC;">
-      {{ skill }} <span style="opacity: .55;">× {{ count }}</span>
-    </span>
+      <span class="skill-tag">
+        {{ skill }}
+        <span class="skill-tag-count">× {{ count }}</span>
+      </span>
     {% endfor %}
   </div>
 </div>
 {% endif %}
 
-<div class="card">
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Club</th>
-          <th>Status</th>
-          <th>Current role</th>
-          <th>Skills</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for club in clubs %}
-        <tr>
-          <td>
-            <a href="{% url 'extracurricular:club_detail' club.pk %}"
-               style="font-weight: 500;">{{ club.name }}</a>
-          </td>
-          <td>
-            {% if club.is_active %}
-              <span class="badge badge-safety">Active</span>
-            {% else %}
-              <span class="badge" style="background: rgba(255,255,255,.07);
-                color: rgba(255,255,255,.4);">Inactive</span>
-            {% endif %}
-          </td>
-          <td>
-            {% if club.current_role %}
-              {{ club.current_role.title }}
-            {% else %}
-              <span class="text-muted">—</span>
-            {% endif %}
-          </td>
-          <td>
-            <div style="display: flex; flex-wrap: wrap; gap: 4px;">
-              {% for skill in club.skills.all %}
-                <span class="badge badge-match">{{ skill.name }}</span>
-              {% endfor %}
-            </div>
-          </td>
-          <td style="text-align: right; white-space: nowrap;">
-            <a class="btn btn-outline btn-sm"
-               href="{% url 'extracurricular:club_edit' club.pk %}">Edit</a>
-            <a class="btn btn-danger btn-sm"
-               href="{% url 'extracurricular:club_delete' club.pk %}"
-               style="margin-left: 4px;">Delete</a>
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="5">
-            <div class="empty">
-              <div class="empty-icon">🎭</div>
-              <p>No clubs logged yet.</p>
-            </div>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
+{% if clubs %}
+  <div class="club-grid">
+    {% for club in clubs %}
+      <article class="card spotlight-card club-card{% if not club.is_active %} is-inactive{% endif %}"
+               data-reveal data-reveal-delay="{{ forloop.counter0|add:120 }}">
+        <div class="club-card-top">
+          <a class="club-card-name" href="{% url 'extracurricular:club_detail' club.pk %}">{{ club.name }}</a>
+          {% if club.is_active %}
+            <span class="badge badge-safety">Active</span>
+          {% else %}
+            <span class="badge badge-inactive">Inactive</span>
+          {% endif %}
+        </div>
 
+        <div class="club-card-role">
+          <span class="club-card-role-label">Role</span>
+          {% if club.current_role %}
+            <span>{{ club.current_role.title }}</span>
+          {% else %}
+            <span class="text-muted">No role logged</span>
+          {% endif %}
+        </div>
+
+        <div class="club-card-skills">
+          {% for skill in club.skills.all %}
+            <span class="badge badge-match">{{ skill.name }}</span>
+          {% empty %}
+            <span class="text-muted" style="font-size:12px">No skills tagged</span>
+          {% endfor %}
+        </div>
+
+        <div class="club-card-actions">
+          <a class="btn btn-outline btn-sm" href="{% url 'extracurricular:club_edit' club.pk %}">Edit</a>
+          <a class="btn btn-danger btn-sm" href="{% url 'extracurricular:club_delete' club.pk %}">Delete</a>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card spotlight-card clubs-empty" data-reveal>
+    <div class="clubs-empty-icon" aria-hidden="true">🎭</div>
+    <h2>No clubs logged yet</h2>
+    <p>Add your first club or society to start tracking roles and skills for your portfolio.</p>
+    <a class="btn btn-primary" href="{% url 'extracurricular:club_create' %}">+ Add your first club</a>
+  </div>
+{% endif %}
 {% endblock %}
