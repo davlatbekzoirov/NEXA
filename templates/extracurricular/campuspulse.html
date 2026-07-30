@@ -11,10 +11,12 @@
   }
   .dash-row-2 { grid-template-columns: 1fr 1fr; }
   .dash-row-3 { grid-template-columns: 1.5fr 1fr; }
+  .dash-row-insights { grid-template-columns: 1fr 1.2fr; }
 
   @media (max-width: 768px) {
     .dash-row-2,
-    .dash-row-3 {
+    .dash-row-3,
+    .dash-row-insights {
       grid-template-columns: 1fr;
     }
   }
@@ -22,6 +24,72 @@
   .dashboard-header-actions {
     display: flex;
     flex-wrap: wrap;
+  }
+
+  .insights-stat-pair {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    margin-top: 0.5rem;
+  }
+  .insights-stat {
+    flex: 1;
+    background: #1e1e1d;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    min-width: 0;
+  }
+  .insights-stat-label {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+  }
+  .insights-stat-value {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 4px;
+  }
+  .insights-reco {
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.05);
+    padding: 12px;
+    border-radius: 9px;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .insights-reco-label {
+    color: #fff;
+    display: block;
+    margin-bottom: 4px;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #BA7517;
+  }
+  .path-row { margin-bottom: 1.25rem; }
+  .path-row:last-child { margin-bottom: 0; }
+  .path-row-header {
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .path-gaps {
+    font-size: 12px;
+    display: flex;
+    gap: 4px;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+  .path-gap-tag {
+    color: #F09595;
+    background: rgba(226,75,74,0.1);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 11px;
   }
 
   @media (max-width: 480px) {
@@ -36,6 +104,12 @@
     .page-header {
       flex-wrap: wrap;
     }
+    .insights-stat-pair {
+      gap: 0.5rem;
+    }
+    .insights-stat-value {
+      font-size: 20px;
+    }
   }
 </style>
 {% endblock %}
@@ -45,7 +119,7 @@
   <h1 class="page-title">Campus life dashboard</h1>
   <div class="gap-2 dashboard-header-actions">
     <a class="btn btn-outline btn-sm" href="{% url 'extracurricular:resume_generator' %}">📝 Resume Tools</a>
-    <a class="btn btn-outline btn-sm" href="{% url 'extracurricular:analytics_insights' %}">📊 Growth Insights</a>
+    <a class="btn btn-outline btn-sm" href="#insights">📊 Growth Insights</a>
   </div>
 </div>
 
@@ -141,6 +215,62 @@
     {% endif %}
   </div>
 
+</div>
+
+<div id="insights" style="scroll-margin-top: 90px;">
+  <h2 style="font-size:15px;font-weight:600;color:#e8e6f0;margin:1.5rem 0 .75rem">Growth & leadership analytics</h2>
+  <div class="dash-row dash-row-insights">
+
+    <div class="card">
+      <p class="card-title">Leadership Balance Index</p>
+
+      <div class="insights-stat-pair">
+        <div class="insights-stat">
+          <div class="insights-stat-label">Exec Roles</div>
+          <div class="insights-stat-value" style="color:#7F77DD">{{ leadership_count }}</div>
+        </div>
+        <div class="insights-stat">
+          <div class="insights-stat-label">General Member</div>
+          <div class="insights-stat-value" style="color:#e8e6f0">{{ member_count }}</div>
+        </div>
+      </div>
+
+      <div class="insights-reco">
+        <strong class="insights-reco-label">💡 Recommendation:</strong>
+        {{ leadership_feedback }}
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-title">Target Path Skill-Gap Analysis</p>
+      <p class="text-muted" style="margin-bottom: 1rem;">Comparison index of logged skill categories evaluated against classic target recruitment criteria:</p>
+
+      {% for path, data in path_analysis.items %}
+        <div class="path-row">
+          <div class="path-row-header">
+            <span style="color: #fff;">{{ path }}</span>
+            <span class="text-muted">{{ data.match_pct }}% Fit</span>
+          </div>
+
+          <div class="score-bar" style="margin: 6px 0;">
+            <div class="score-fill {% if data.match_pct > 70 %}score-fill-green{% elif data.match_pct > 40 %}score-fill-blue{% endif %}" style="width: {{ data.match_pct }}%"></div>
+          </div>
+
+          <div class="path-gaps">
+            {% if data.missing %}
+              <span style="color: #888;">Gaps to build:</span>
+              {% for skill in data.missing %}
+                <span class="path-gap-tag">{{ skill }}</span>
+              {% endfor %}
+            {% else %}
+              <span style="color: #5DCAA5;">✓ Core targets logged! Excellent tracking portfolio.</span>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
 </div>
 
 <div class="dash-row dash-row-3">
