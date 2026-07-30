@@ -4,69 +4,276 @@
 {% block extra_head %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
+  /* ── Dashboard layout ─────────────────────────────── */
+  .dash-hero {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-strong);
+  }
+  .dash-hero-copy { flex: 1 1 260px; min-width: 0; }
+  .dash-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: .65rem;
+  }
+  .dash-eyebrow::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--brass-line);
+  }
+  .dash-hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 4vw, 1.75rem);
+    font-weight: 600;
+    letter-spacing: -.02em;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: .35rem;
+  }
+  .dash-hero-lede {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.55;
+    max-width: 42ch;
+  }
+  .dash-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-self: center;
+  }
+
   .dash-row {
     display: grid;
     gap: 1rem;
     margin-bottom: 1rem;
   }
-  .dash-row-2 { grid-template-columns: 1fr 1fr; }
-  .dash-row-3 { grid-template-columns: 1.5fr 1fr; }
-  .dash-row-insights { grid-template-columns: 1fr 1.2fr; }
+  .dash-row-2 { grid-template-columns: repeat(2, 1fr); }
+  .dash-row-3 { grid-template-columns: 1.4fr 1fr; }
+  .dash-row-insights { grid-template-columns: 1fr 1.15fr; }
 
-  @media (max-width: 768px) {
-    .dash-row-2,
-    .dash-row-3,
-    .dash-row-insights {
-      grid-template-columns: 1fr;
-    }
+  .dash-section {
+    scroll-margin-top: 90px;
+    margin-top: .5rem;
   }
+  .dash-section + .dash-section { margin-top: 0; }
 
-  .dashboard-header-actions {
-    display: flex;
-    flex-wrap: wrap;
+  /* ── Card helpers ───────────────────────────────── */
+  .card-title {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: .85rem;
   }
+  .text-muted { color: var(--text-dim); font-size: 13.5px; }
 
-  .insights-stat-pair {
+  .dash-card {
     display: flex;
-    gap: 1rem;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .dash-card-grow { flex: 1; }
+
+  .card-accent {
+    background:
+      linear-gradient(135deg, rgba(203,162,63,.06) 0%, transparent 55%),
+      var(--surface);
+    border-color: var(--brass-line);
+  }
+  .card-accent .card-title { color: var(--brass); }
+
+  /* ── Stats ──────────────────────────────────────── */
+  .dash-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
     margin-bottom: 1.25rem;
-    margin-top: 0.5rem;
+  }
+  .dash-stat-grid .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .stat-icon {
+    font-size: 18px;
+    line-height: 1;
+    margin-bottom: 4px;
+    opacity: .85;
+  }
+
+  /* ── Milestone & event ──────────────────────────── */
+  .milestone-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .milestone-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 12.5px;
+  }
+  .score-bar-lg { height: 7px; margin: 10px 0 8px; border-radius: 4px; }
+  .score-bar-lg .score-fill { height: 7px; border-radius: 4px; }
+
+  .event-title {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+    line-height: 1.35;
+  }
+  .event-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+  .countdown-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: .02em;
+    color: var(--brass);
+    background: var(--brass-soft);
+    border: 1px solid var(--brass-line);
+  }
+  .countdown-pill-icon { font-size: 14px; line-height: 1; }
+
+  /* ── Chart ──────────────────────────────────────── */
+  .chart-wrap {
+    position: relative;
+    height: clamp(140px, 22vw, 180px);
+    min-height: 140px;
+  }
+
+  /* ── Impact journal ─────────────────────────────── */
+  .impact-list { list-style: none; }
+  .impact-item {
+    display: grid;
+    grid-template-columns: 72px 1fr auto;
+    gap: 10px;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .impact-item:last-child { border-bottom: none; }
+  .impact-date {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-faint);
+    white-space: nowrap;
+  }
+  .impact-desc { font-size: 14px; color: var(--text); line-height: 1.45; }
+  .impact-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+  .impact-footer {
+    margin-top: auto;
+    padding-top: 12px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .impact-link {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--brass);
+    text-decoration: none;
+    transition: color .15s;
+  }
+  .impact-link:hover { color: var(--ink); text-decoration: none; }
+
+  /* ── Insights ───────────────────────────────────── */
+  .insights-stat-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 1.1rem;
   }
   .insights-stat {
-    flex: 1;
-    background: #1e1e1d;
-    padding: 10px;
-    border-radius: 8px;
+    background: var(--bg-raise);
+    border: 1px solid var(--border);
+    padding: 12px 10px;
+    border-radius: var(--radius);
     text-align: center;
     min-width: 0;
+    transition: border-color .15s, transform .15s;
+  }
+  .insights-stat:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-1px);
   }
   .insights-stat-label {
-    font-size: 11px;
-    color: #888;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-faint);
     text-transform: uppercase;
+    letter-spacing: .06em;
   }
   .insights-stat-value {
-    font-size: 24px;
-    font-weight: bold;
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 4vw, 1.6rem);
+    font-weight: 600;
     margin-top: 4px;
+    line-height: 1;
   }
+  .insights-stat-value--lead { color: var(--ink-indigo); }
+  .insights-stat-value--member { color: var(--ink); }
+
   .insights-reco {
-    background: rgba(255,255,255,.03);
-    border: 1px solid rgba(255,255,255,.05);
-    padding: 12px;
-    border-radius: 9px;
+    background: var(--bg-raise);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--brass);
+    padding: 12px 14px;
+    border-radius: var(--radius);
     font-size: 13.5px;
-    line-height: 1.5;
+    line-height: 1.55;
+    color: var(--text);
   }
   .insights-reco-label {
-    color: #fff;
     display: block;
-    margin-bottom: 4px;
-    font-size: 12px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     text-transform: uppercase;
-    color: #BA7517;
+    letter-spacing: .06em;
+    color: var(--brass);
+    margin-bottom: 6px;
   }
-  .path-row { margin-bottom: 1.25rem; }
+
+  /* ── Path analysis ──────────────────────────────── */
+  .path-row { margin-bottom: 1.15rem; }
   .path-row:last-child { margin-bottom: 0; }
   .path-row-header {
     font-size: 13px;
@@ -76,218 +283,288 @@
     justify-content: space-between;
     gap: 8px;
     flex-wrap: wrap;
+    color: var(--ink);
+  }
+  .path-fit {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--text-dim);
   }
   .path-gaps {
     font-size: 12px;
     display: flex;
-    gap: 4px;
+    gap: 6px;
     align-items: baseline;
     flex-wrap: wrap;
+    margin-top: 4px;
   }
   .path-gap-tag {
-    color: #F09595;
-    background: rgba(226,75,74,0.1);
-    padding: 1px 6px;
+    color: #E8AFAA;
+    background: rgba(168,80,74,.12);
+    border: 1px solid rgba(168,80,74,.25);
+    padding: 2px 8px;
     border-radius: 4px;
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
   }
+  .path-complete { color: var(--ink-green); font-size: 12.5px; }
 
-  @media (max-width: 480px) {
-    .dashboard-header-actions {
+  /* ── Calendar & portfolio ───────────────────────── */
+  .ical-box {
+    background: var(--bg-raise);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--seal-blue);
+    word-break: break-all;
+    line-height: 1.5;
+  }
+  .portfolio-actions { margin-top: 14px; }
+  .portfolio-actions .btn { width: 100%; justify-content: center; }
+
+  .badge-in_progress { color: var(--ink-amber); }
+  .badge-graded { color: var(--ink-green); }
+
+  /* ── Responsive ─────────────────────────────────── */
+  @media (max-width: 860px) {
+    .dash-row-2,
+    .dash-row-3,
+    .dash-row-insights {
+      grid-template-columns: 1fr;
+    }
+    .dash-hero-actions {
       width: 100%;
     }
-    .dashboard-header-actions a {
-      flex: 1 1 auto;
-      text-align: center;
+    .dash-hero-actions .btn {
+      flex: 1 1 calc(50% - 4px);
       justify-content: center;
     }
-    .page-header {
-      flex-wrap: wrap;
+  }
+
+  @media (max-width: 640px) {
+    .dash-stat-grid {
+      grid-template-columns: 1fr;
     }
-    .insights-stat-pair {
-      gap: 0.5rem;
+    .dash-stat-grid .stat {
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      padding: .875rem 1rem;
     }
-    .insights-stat-value {
-      font-size: 20px;
+    .dash-stat-grid .stat-icon {
+      margin-bottom: 0;
+      font-size: 22px;
+    }
+    .dash-stat-grid .stat-body { flex: 1; min-width: 0; }
+    .dash-stat-grid .stat-value { font-size: 1.65rem; }
+    .impact-item {
+      grid-template-columns: 1fr;
+      gap: 4px;
+      padding: 12px 0;
+    }
+    .impact-tag { justify-self: start; }
+    .chart-wrap { height: 200px; }
+    .insights-stat-pair { gap: 8px; }
+  }
+
+  @media (max-width: 400px) {
+    .dash-hero-actions .btn {
+      flex: 1 1 100%;
+    }
+    .milestone-header,
+    .milestone-footer {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .countdown-pill {
+      width: 100%;
+      justify-content: center;
     }
   }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="page-header">
-  <h1 class="page-title">Campus life dashboard</h1>
-  <div class="gap-2 dashboard-header-actions">
-    <a class="btn btn-outline btn-sm" href="{% url 'extracurricular:resume_generator' %}">📝 Resume Tools</a>
-    <a class="btn btn-outline btn-sm" href="#insights">📊 Growth Insights</a>
+<header class="dash-hero" data-reveal>
+  <div class="dash-hero-copy">
+    <p class="dash-eyebrow">CampusPulse</p>
+    <h1>Campus life dashboard</h1>
+    <p class="dash-hero-lede">Your clubs, volunteer hours, and impact — tracked in one place.</p>
   </div>
-</div>
+  <div class="dash-hero-actions">
+    <a class="btn btn-outline btn-sm" href="{% url 'extracurricular:resume_generator' %}">Resume Tools</a>
+    <a class="btn btn-outline btn-sm" href="#insights">Growth Insights</a>
+  </div>
+</header>
 
-<div class="stat-grid" style="margin-bottom:1.25rem">
+<div class="dash-stat-grid" data-reveal data-reveal-delay="60">
   <div class="stat stat-purple">
-    <div class="stat-label">Active clubs</div>
-    <div class="stat-value">{{ total_clubs }}</div>
-    <div class="stat-sub">this semester</div>
+    <span class="stat-icon" aria-hidden="true">🎭</span>
+    <div class="stat-body">
+      <div class="stat-label">Active clubs</div>
+      <div class="stat-value">{{ total_clubs }}</div>
+      <div class="stat-sub">this semester</div>
+    </div>
   </div>
   <div class="stat stat-teal">
-    <div class="stat-label">Volunteer hours</div>
-    <div class="stat-value">{{ volunteer_summary.total_hours }}</div>
-    <div class="stat-sub">total logged</div>
+    <span class="stat-icon" aria-hidden="true">🤝</span>
+    <div class="stat-body">
+      <div class="stat-label">Volunteer hours</div>
+      <div class="stat-value">{{ volunteer_summary.total_hours }}</div>
+      <div class="stat-sub">total logged</div>
+    </div>
   </div>
   <div class="stat stat-amber">
-    <div class="stat-label">Impacts recorded</div>
-    <div class="stat-value">{{ total_impacts }}</div>
-    <div class="stat-sub">in journal</div>
+    <span class="stat-icon" aria-hidden="true">✦</span>
+    <div class="stat-body">
+      <div class="stat-label">Impacts recorded</div>
+      <div class="stat-value">{{ total_impacts }}</div>
+      <div class="stat-sub">in journal</div>
+    </div>
   </div>
 </div>
 
 <div class="dash-row dash-row-2">
-
-  <div class="card">
+  <div class="card spotlight-card dash-card" data-reveal data-reveal-delay="100">
     <p class="card-title">Volunteer milestone</p>
     {% if volunteer_summary.next_tier %}
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <div class="milestone-header">
         {% if volunteer_summary.current_tier %}
           <span class="badge badge-in_progress">{{ volunteer_summary.current_tier.0 }}</span>
         {% endif %}
         <span class="text-muted">{{ volunteer_summary.hours_remaining }} hrs to {{ volunteer_summary.next_tier.0 }}</span>
       </div>
-      <div class="score-bar" style="margin:8px 0 6px">
+      <div class="score-bar score-bar-lg">
         <div class="score-fill" style="width:{{ volunteer_summary.progress_pct }}%"></div>
       </div>
-      <div style="display:flex;justify-content:space-between">
-        <span class="text-muted">{{ volunteer_summary.total_hours }} / {{ volunteer_summary.next_tier.1 }} hrs</span>
-        <span class="text-muted">{{ volunteer_summary.progress_pct }}%</span>
+      <div class="milestone-footer text-muted">
+        <span>{{ volunteer_summary.total_hours }} / {{ volunteer_summary.next_tier.1 }} hrs</span>
+        <span>{{ volunteer_summary.progress_pct }}%</span>
       </div>
     {% else %}
       <span class="badge badge-graded">Platinum unlocked</span>
-      <p class="text-muted" style="margin-top:8px">{{ volunteer_summary.total_hours }} hours logged — all tiers complete!</p>
+      <p class="text-muted" style="margin-top:10px">{{ volunteer_summary.total_hours }} hours logged — all tiers complete!</p>
     {% endif %}
   </div>
 
-  <div class="card">
+  <div class="card spotlight-card dash-card" data-reveal data-reveal-delay="140">
     <p class="card-title">Next event</p>
     {% if next_event %}
-      <p style="font-size:15px;font-weight:600;color:#e8e6f0;margin-bottom:4px">{{ next_event.title }}</p>
+      <p class="event-title">{{ next_event.title }}</p>
       {% if next_event.location %}
-        <p class="text-muted" style="display:flex;align-items:center;gap:5px;margin-bottom:3px">
-          <span>&#x1F4CD;</span> {{ next_event.location }}
-        </p>
+        <p class="event-meta"><span aria-hidden="true">📍</span> {{ next_event.location }}</p>
       {% endif %}
       <p class="text-muted">{{ next_event.start_time }}</p>
-      <div style="margin-top:10px;display:inline-flex;align-items:center;gap:6px;background:#1e1e1d;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:6px 12px;font-size:13px;font-weight:500;color:#AFA9EC">
-        &#x23F1; <span id="countdown" data-countdown="{{ next_event.start_time|date:'c' }}">Calculating…</span>
+      <div class="countdown-pill">
+        <span class="countdown-pill-icon" aria-hidden="true">⏱</span>
+        <span id="countdown" data-countdown="{{ next_event.start_time|date:'c' }}">Calculating…</span>
       </div>
     {% else %}
       <p class="text-muted">No upcoming events scheduled.</p>
     {% endif %}
   </div>
-
 </div>
 
 <div class="dash-row dash-row-2">
-
-  <div class="card">
+  <div class="card spotlight-card dash-card" data-reveal data-reveal-delay="180">
     <p class="card-title">Hours by cause</p>
-    <div style="position:relative;height:160px">
-      <canvas id="causeChart"></canvas>
+    <div class="chart-wrap">
+      <canvas id="causeChart" aria-label="Volunteer hours by cause chart"></canvas>
     </div>
   </div>
 
-  <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
-    <div>
-      <p class="card-title">Recent impact journal</p>
-      {% for entry in recent_impacts %}
-        <div style="display:flex;align-items:baseline;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">
-          <span class="text-muted" style="min-width:72px;flex-shrink:0">{{ entry.date }}</span>
-          <span style="font-size:14px;flex:1">{{ entry.description }}</span>
-          {% if entry.impact %}<span class="text-muted" style="flex-shrink:0">{{ entry.impact }}</span>{% endif %}
-        </div>
-      {% empty %}
+  <div class="card spotlight-card dash-card" data-reveal data-reveal-delay="220">
+    <p class="card-title">Recent impact journal</p>
+    <div class="dash-card-grow">
+      {% if recent_impacts %}
+        <ul class="impact-list">
+          {% for entry in recent_impacts %}
+            <li class="impact-item">
+              <span class="impact-date">{{ entry.date }}</span>
+              <span class="impact-desc">{{ entry.description }}</span>
+              {% if entry.impact %}<span class="impact-tag">{{ entry.impact }}</span>{% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
         <p class="text-muted">No impact entries logged yet.</p>
-      {% endfor %}
+      {% endif %}
     </div>
-
     {% if recent_impacts %}
-      <div style="margin-top: 12px; padding-top: 8px; display: flex; justify-content: flex-end;">
-         <a href="{% url 'extracurricular:resume_generator' %}" style="font-size: 12px; color: #7F77DD;">Convert these entries to resume points →</a>
+      <div class="impact-footer">
+        <a class="impact-link" href="{% url 'extracurricular:resume_generator' %}">Convert to resume points →</a>
       </div>
     {% endif %}
   </div>
-
 </div>
 
-<div id="insights" style="scroll-margin-top: 90px;">
-  <h2 style="font-size:15px;font-weight:600;color:#e8e6f0;margin:1.5rem 0 .75rem">Growth & leadership analytics</h2>
+<section id="insights" class="dash-section">
+  <div class="section-heading" data-reveal>
+    <h2>Growth & leadership analytics</h2>
+    <span>Skill gaps & balance</span>
+  </div>
   <div class="dash-row dash-row-insights">
-
-    <div class="card">
+    <div class="card spotlight-card" data-reveal data-reveal-delay="80">
       <p class="card-title">Leadership Balance Index</p>
-
       <div class="insights-stat-pair">
         <div class="insights-stat">
-          <div class="insights-stat-label">Exec Roles</div>
-          <div class="insights-stat-value" style="color:#7F77DD">{{ leadership_count }}</div>
+          <div class="insights-stat-label">Exec roles</div>
+          <div class="insights-stat-value insights-stat-value--lead">{{ leadership_count }}</div>
         </div>
         <div class="insights-stat">
-          <div class="insights-stat-label">General Member</div>
-          <div class="insights-stat-value" style="color:#e8e6f0">{{ member_count }}</div>
+          <div class="insights-stat-label">General member</div>
+          <div class="insights-stat-value insights-stat-value--member">{{ member_count }}</div>
         </div>
       </div>
-
       <div class="insights-reco">
-        <strong class="insights-reco-label">💡 Recommendation:</strong>
+        <span class="insights-reco-label">Recommendation</span>
         {{ leadership_feedback }}
       </div>
     </div>
 
-    <div class="card">
-      <p class="card-title">Target Path Skill-Gap Analysis</p>
-      <p class="text-muted" style="margin-bottom: 1rem;">Comparison index of logged skill categories evaluated against classic target recruitment criteria:</p>
-
+    <div class="card spotlight-card" data-reveal data-reveal-delay="120">
+      <p class="card-title">Target path skill-gap analysis</p>
+      <p class="text-muted" style="margin-bottom:1rem">Logged skill categories compared to classic recruitment criteria.</p>
       {% for path, data in path_analysis.items %}
         <div class="path-row">
           <div class="path-row-header">
-            <span style="color: #fff;">{{ path }}</span>
-            <span class="text-muted">{{ data.match_pct }}% Fit</span>
+            <span>{{ path }}</span>
+            <span class="path-fit">{{ data.match_pct }}% fit</span>
           </div>
-
-          <div class="score-bar" style="margin: 6px 0;">
-            <div class="score-fill {% if data.match_pct > 70 %}score-fill-green{% elif data.match_pct > 40 %}score-fill-blue{% endif %}" style="width: {{ data.match_pct }}%"></div>
+          <div class="score-bar" style="margin:8px 0">
+            <div class="score-fill {% if data.match_pct > 70 %}score-fill-green{% elif data.match_pct > 40 %}score-fill-blue{% endif %}" style="width:{{ data.match_pct }}%"></div>
           </div>
-
           <div class="path-gaps">
             {% if data.missing %}
-              <span style="color: #888;">Gaps to build:</span>
+              <span class="text-muted">Gaps to build:</span>
               {% for skill in data.missing %}
                 <span class="path-gap-tag">{{ skill }}</span>
               {% endfor %}
             {% else %}
-              <span style="color: #5DCAA5;">✓ Core targets logged! Excellent tracking portfolio.</span>
+              <span class="path-complete">✓ Core targets logged — excellent portfolio.</span>
             {% endif %}
           </div>
         </div>
       {% endfor %}
     </div>
-
   </div>
-</div>
+</section>
 
 <div class="dash-row dash-row-3">
-  <div class="card">
-    <p class="card-title" style="margin-bottom:.5rem">Calendar feed</p>
-    <p class="text-muted" style="margin-bottom:8px">Subscribe in Apple or Google Calendar using this URL:</p>
-    <div style="background:#1e1e1d;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:9px 12px;font-size:12px;font-family:monospace;color:#AFA9EC;word-break:break-all">
-      {{ request.scheme }}://{{ request.get_host }}{% url 'extracurricular:ical_feed' feed_token %}
-    </div>
+  <div class="card spotlight-card dash-card" data-reveal data-reveal-delay="160">
+    <p class="card-title">Calendar feed</p>
+    <p class="text-muted" style="margin-bottom:10px">Subscribe in Apple or Google Calendar using this URL:</p>
+    <div class="ical-box">{{ request.scheme }}://{{ request.get_host }}{% url 'extracurricular:ical_feed' feed_token %}</div>
   </div>
 
-  <div class="card" style="background: rgba(127,119,221,.03); border-color: rgba(127,119,221,.15); display: flex; flex-direction: column; justify-content: space-between;">
-    <div>
-      <p class="card-title" style="color: #AFA9EC; margin-bottom: 0.5rem;">Public Portfolio</p>
-      <p class="text-muted" style="line-height: 1.4;">Your profile page link is active and ready to be integrated into portfolios or applications.</p>
+  <div class="card card-accent spotlight-card dash-card" data-reveal data-reveal-delay="200">
+    <p class="card-title">Public portfolio</p>
+    <p class="text-muted" style="line-height:1.55">Your profile link is active and ready for portfolios or applications.</p>
+    <div class="portfolio-actions">
+      <a class="btn btn-outline btn-sm" href="{% url 'extracurricular:portfolio_settings' %}">Manage portfolio access</a>
     </div>
-    <a class="btn btn-outline btn-sm" href="{% url 'extracurricular:portfolio_settings' %}" style="margin-top: 10px; width: 10px; min-width: 100%; text-align: center; justify-content: center;">Manage Portfolio Access</a>
   </div>
 </div>
 
@@ -296,52 +573,74 @@
 
 {% block extra_js %}
 <script>
-const causeData = JSON.parse(document.getElementById('cause-data').textContent);
-const narrowScreen = window.matchMedia('(max-width: 480px)');
-const causeChart = new Chart(document.getElementById('causeChart'), {
-  type: 'doughnut',
-  data: {
-    labels: causeData.map(c => c.cause__name || 'Uncategorized'),
-    datasets: [{
-      data: causeData.map(c => parseFloat(c.total)),
-      backgroundColor: causeData.map(c => c.cause__color || '#5F5E5A'),
-      borderWidth: 0
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: narrowScreen.matches ? 'bottom' : 'right',
-        labels: { color: '#888', font: { size: 12 }, boxWidth: 10, padding: 10 }
-      }
+(function () {
+  const causeData = JSON.parse(document.getElementById('cause-data').textContent);
+  const chartColors = ['#6364A0', '#4C7C56', '#CBA23F', '#5C87A0', '#A8504A', '#B68B3C', '#5E7488'];
+  const narrow = window.matchMedia('(max-width: 640px)');
+  const tablet = window.matchMedia('(max-width: 860px)');
+
+  const causeChart = new Chart(document.getElementById('causeChart'), {
+    type: 'doughnut',
+    data: {
+      labels: causeData.map(c => c.cause__name || 'Uncategorized'),
+      datasets: [{
+        data: causeData.map(c => parseFloat(c.total)),
+        backgroundColor: causeData.map((c, i) => c.cause__color || chartColors[i % chartColors.length]),
+        borderWidth: 0,
+        hoverOffset: 6
+      }]
     },
-    cutout: '65%'
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: narrow.matches ? 'bottom' : (tablet.matches ? 'bottom' : 'right'),
+          labels: {
+            color: '#929A8C',
+            font: { family: "'IBM Plex Mono', monospace", size: narrow.matches ? 10 : 11 },
+            boxWidth: 10,
+            padding: narrow.matches ? 8 : 12,
+            usePointStyle: true,
+            pointStyle: 'circle'
+          }
+        },
+        tooltip: {
+          backgroundColor: '#1E2B25',
+          borderColor: 'rgba(231,221,191,.15)',
+          borderWidth: 1,
+          titleFont: { family: "'IBM Plex Sans', sans-serif" },
+          bodyFont: { family: "'IBM Plex Mono', monospace", size: 12 },
+          padding: 10,
+          cornerRadius: 8
+        }
+      },
+      cutout: narrow.matches ? '58%' : '65%'
+    }
+  });
+
+  function syncChartLayout() {
+    causeChart.options.plugins.legend.position = narrow.matches || tablet.matches ? 'bottom' : 'right';
+    causeChart.options.cutout = narrow.matches ? '58%' : '65%';
+    causeChart.update();
   }
-});
+  if (narrow.addEventListener) {
+    narrow.addEventListener('change', syncChartLayout);
+    tablet.addEventListener('change', syncChartLayout);
+  }
 
-function syncLegendPosition(e) {
-  causeChart.options.plugins.legend.position = e.matches ? 'bottom' : 'right';
-  causeChart.update();
-}
-if (narrowScreen.addEventListener) {
-  narrowScreen.addEventListener('change', syncLegendPosition);
-} else if (narrowScreen.addListener) {
-  narrowScreen.addListener(syncLegendPosition);
-}
-
-function updateCountdown() {
-  const el = document.getElementById('countdown');
-  if (!el) return;
-  const diff = new Date(el.dataset.countdown).getTime() - Date.now();
-  if (diff <= 0) { el.textContent = 'Starting now!'; return; }
-  const d = Math.floor(diff / 86400000);
-  const h = Math.floor((diff % 86400000) / 3600000);
-  const m = Math.floor((diff % 3600000) / 60000);
-  el.textContent = d + 'd ' + h + 'h ' + m + 'm';
-}
-updateCountdown();
-setInterval(updateCountdown, 60000);
+  function updateCountdown() {
+    const el = document.getElementById('countdown');
+    if (!el) return;
+    const diff = new Date(el.dataset.countdown).getTime() - Date.now();
+    if (diff <= 0) { el.textContent = 'Starting now!'; return; }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    el.textContent = d + 'd ' + h + 'h ' + m + 'm';
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 60000);
+})();
 </script>
 {% endblock %}
