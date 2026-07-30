@@ -3,12 +3,47 @@
 
 {% block extra_head %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  .dash-row {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .dash-row-2 { grid-template-columns: 1fr 1fr; }
+  .dash-row-3 { grid-template-columns: 1.5fr 1fr; }
+
+  @media (max-width: 768px) {
+    .dash-row-2,
+    .dash-row-3 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .dashboard-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 480px) {
+    .dashboard-header-actions {
+      width: 100%;
+    }
+    .dashboard-header-actions a {
+      flex: 1 1 auto;
+      text-align: center;
+      justify-content: center;
+    }
+    .page-header {
+      flex-wrap: wrap;
+    }
+  }
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="page-header">
   <h1 class="page-title">Campus life dashboard</h1>
-  <div class="gap-2">
+  <div class="gap-2 dashboard-header-actions">
     <a class="btn btn-outline btn-sm" href="{% url 'extracurricular:resume_generator' %}">📝 Resume Tools</a>
     <a class="btn btn-outline btn-sm" href="{% url 'extracurricular:analytics_insights' %}">📊 Growth Insights</a>
   </div>
@@ -32,7 +67,7 @@
   </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+<div class="dash-row dash-row-2">
 
   <div class="card">
     <p class="card-title">Volunteer milestone</p>
@@ -76,7 +111,7 @@
 
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+<div class="dash-row dash-row-2">
 
   <div class="card">
     <p class="card-title">Hours by cause</p>
@@ -98,7 +133,7 @@
         <p class="text-muted">No impact entries logged yet.</p>
       {% endfor %}
     </div>
-    
+
     {% if recent_impacts %}
       <div style="margin-top: 12px; padding-top: 8px; display: flex; justify-content: flex-end;">
          <a href="{% url 'extracurricular:resume_generator' %}" style="font-size: 12px; color: #7F77DD;">Convert these entries to resume points →</a>
@@ -108,7 +143,7 @@
 
 </div>
 
-<div style="display:grid;grid-template-columns:1.5fr 1fr;gap:1rem;margin-bottom:1rem">
+<div class="dash-row dash-row-3">
   <div class="card">
     <p class="card-title" style="margin-bottom:.5rem">Calendar feed</p>
     <p class="text-muted" style="margin-bottom:8px">Subscribe in Apple or Google Calendar using this URL:</p>
@@ -132,7 +167,8 @@
 {% block extra_js %}
 <script>
 const causeData = JSON.parse(document.getElementById('cause-data').textContent);
-new Chart(document.getElementById('causeChart'), {
+const narrowScreen = window.matchMedia('(max-width: 480px)');
+const causeChart = new Chart(document.getElementById('causeChart'), {
   type: 'doughnut',
   data: {
     labels: causeData.map(c => c.cause__name || 'Uncategorized'),
@@ -147,13 +183,23 @@ new Chart(document.getElementById('causeChart'), {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'right',
+        position: narrowScreen.matches ? 'bottom' : 'right',
         labels: { color: '#888', font: { size: 12 }, boxWidth: 10, padding: 10 }
       }
     },
     cutout: '65%'
   }
 });
+
+function syncLegendPosition(e) {
+  causeChart.options.plugins.legend.position = e.matches ? 'bottom' : 'right';
+  causeChart.update();
+}
+if (narrowScreen.addEventListener) {
+  narrowScreen.addEventListener('change', syncLegendPosition);
+} else if (narrowScreen.addListener) {
+  narrowScreen.addListener(syncLegendPosition);
+}
 
 function updateCountdown() {
   const el = document.getElementById('countdown');
