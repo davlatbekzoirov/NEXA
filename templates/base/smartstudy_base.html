@@ -24,7 +24,7 @@
     <div class="nav-panel" id="nav-panel">
       <div class="nav-links" id="nav-links">
         {% if user.is_authenticated %}
-            <a href="{% url 'universities:main_uni' %}" {% if request.resolver_match.url_name == 'main_uni' %}class="active"{% endif %}>Dashboard</a>
+            <a href="{% url 'smart_study:smart_study' %}" {% if request.resolver_match.url_name == 'main_uni' %}class="active"{% endif %}>Dashboard</a>
             <a href="{% url 'smart_study:course_list' %}" {% if request.resolver_match.url_name == 'course_list' %}class="active"{% endif %}>Courses</a>
             <a href="{% url 'smart_study:schedule' %}" {% if request.resolver_match.url_name == 'schedule' %}class="active"{% endif %}>Schedule</a>
             <a href="{% url 'smart_study:pomodoro' %}" {% if request.resolver_match.url_name == 'pomodoro' %}class="active"{% endif %}>Pomodoro</a>
