@@ -2,9 +2,8 @@
 {% block title %}Analytics · NEXA{% endblock %}
 
 {% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-  /* Page-specific responsive + polish additions only — card,
-     spotlight-card, data-reveal come from base.css already. */
   #studyGradeChart{ max-width:100%; }
   @media (max-width:560px){
     .page-header{ flex-direction:column; align-items:flex-start; gap:.5rem; }
@@ -37,68 +36,68 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+{% if chart_data_json %}
 <script>
+  // Safely parse JSON from Django context
   const chartData = {{ chart_data_json|safe }};
+  const ctx = document.getElementById('studyGradeChart').getContext('2d');
 
-  const ctx = document.getElementById('studyGradeChart');
-  if (ctx) {
-    new Chart(ctx, {
-      data: {
-        labels: chartData.labels,
-        datasets: [
-          {
-            type: 'bar',
-            label: 'Study Hours',
-            data: chartData.hours,
-            backgroundColor: 'rgba(127,119,221,.6)',
-            borderColor: '#7F77DD',
-            borderWidth: 1,
-            yAxisID: 'y',
-          },
-          {
-            type: 'line',
-            label: 'Current Grade (%)',
-            data: chartData.grades,
-            borderColor: '#1D9E75',
-            backgroundColor: '#1D9E75',
-            tension: 0.3,
-            yAxisID: 'y1',
-            spanGaps: true,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: { mode: 'index', intersect: false },
-        scales: {
-          y: {
-            type: 'linear',
-            position: 'left',
-            title: { display: true, text: 'Hours', color: '#aaa' },
-            grid: { color: 'rgba(255,255,255,.06)' },
-            ticks: { color: '#aaa' },
-          },
-          y1: {
-            type: 'linear',
-            position: 'right',
-            min: 0,
-            max: 100,
-            title: { display: true, text: 'Grade %', color: '#aaa' },
-            grid: { drawOnChartArea: false },
-            ticks: { color: '#aaa' },
-          },
-          x: {
-            ticks: { color: '#aaa' },
-            grid: { color: 'rgba(255,255,255,.04)' },
-          },
+  new Chart(ctx, {
+    data: {
+      labels: chartData.labels,
+      datasets: [
+        {
+          type: 'bar',
+          label: 'Study Hours',
+          data: chartData.hours,
+          backgroundColor: 'rgba(127,119,221,.6)',
+          borderColor: '#7F77DD',
+          borderWidth: 1,
+          yAxisID: 'y',
         },
-        plugins: {
-          legend: { labels: { color: '#e8e6f0' } },
+        {
+          type: 'line',
+          label: 'Current Grade (%)',
+          data: chartData.grades,
+          borderColor: '#1D9E75',
+          backgroundColor: '#1D9E75',
+          tension: 0.3,
+          yAxisID: 'y1',
+          spanGaps: true,
         },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      scales: {
+        y: {
+          type: 'linear',
+          position: 'left',
+          title: { display: true, text: 'Hours', color: '#aaa' },
+          grid: { color: 'rgba(255,255,255,.06)' },
+          ticks: { color: '#aaa' },
+        },
+        y1: {
+          type: 'linear',
+          position: 'right',
+          min: 0,
+          max: 100,
+          title: { display: true, text: 'Grade %', color: '#aaa' },
+          grid: { drawOnChartArea: false },
+          ticks: { color: '#aaa' },
+        },
+        x: {
+          ticks: { color: '#aaa' },
+          grid: { color: 'rgba(255,255,255,.06)' },
+        }
       },
-    });
-  }
+      plugins: {
+        legend: { labels: { color: '#e8e6f0' } }
+      }
+    }
+  });
 </script>
+{% endif %}
 {% endblock %}

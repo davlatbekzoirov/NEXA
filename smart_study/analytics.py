@@ -81,7 +81,7 @@ class AnalyticsHelper:
             grade = course.current_weighted_grade()
             labels.append(course.name)
             hours.append(round(total_minutes / 60, 1))
-            grades.append(grade if grade is not None else None)
+            grades.append(float(grade) if grade is not None else None)
 
         return {
             'labels': labels,

@@ -1,4 +1,5 @@
 import json
+from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -374,9 +375,12 @@ class AnalyticsViews:
     @login_required
     def study_analytics(request):
         data = get_study_vs_grade_data(request.user)
-        return render(request, 'smartstudy/analytics.html', {
-            'chart_data_json': json.dumps(data),
-        })
+        warnings = get_burnout_warnings(request.user)
+        context = {
+            'chart_data_json': json.dumps(data, cls=DjangoJSONEncoder),
+            'warnings': warnings,
+        }
+        return render(request, 'smartstudy/analytics.html', context)
 
 
 # ─── Study Groups ─────────────────────────────────────────────────────────────
