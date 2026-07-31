@@ -1,19 +1,30 @@
 {% extends 'base/smartstudy_base.html' %}
 {% block title %}Analytics · NEXA{% endblock %}
 
+{% block extra_head %}
+<style>
+  /* Page-specific responsive + polish additions only — card,
+     spotlight-card, data-reveal come from base.css already. */
+  #studyGradeChart{ max-width:100%; }
+  @media (max-width:560px){
+    .page-header{ flex-direction:column; align-items:flex-start; gap:.5rem; }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="page-header">
   <h1 class="page-title">Study vs. Grade Analytics</h1>
 </div>
 
-<div class="card">
+<div class="card spotlight-card" data-reveal>
   <div class="card-title">Hours Studied vs. Current Grade</div>
   {% if chart_data_json %}
     <canvas id="studyGradeChart" height="320"></canvas>
   {% endif %}
 </div>
 
-<div class="card" style="margin-top:1rem;">
+<div class="card spotlight-card" data-reveal data-reveal-delay="80" style="margin-top:1rem;">
   <div class="card-title">How to read this</div>
   <p class="text-muted">
     Bars show total focused study hours logged per course via Pomodoro sessions.
@@ -59,6 +70,7 @@
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
         scales: {
           y: {

@@ -22,6 +22,12 @@
     margin-top:.3rem;
   }
   .card.form-card{ position:relative; max-width:640px; }
+
+  @media (max-width:560px){
+    .card.form-card{ max-width:100%; }
+    .flex-between{ flex-direction:column; gap:.75rem; align-items:stretch; }
+    .flex-between .btn{ width:100%; text-align:center; }
+  }
 </style>
 
 <div class="page-header">

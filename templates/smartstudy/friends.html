@@ -34,6 +34,25 @@
     color:#8a8a8a;
     width:1.8rem;
   }
+
+  /* Responsive + polish additions */
+  .add-friend-form{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+  }
+  @media (max-width:560px){
+    .add-friend-form{ flex-direction:column; align-items:stretch; }
+    .add-friend-form button{ margin-top:0 !important; width:100%; }
+  }
+
+  .friend-row, .sent-row{ transition:padding-left .15s ease; }
+  .friend-row:hover, .sent-row:hover{ padding-left:4px; }
+
+  @media (max-width:560px){
+    .friend-row{ flex-wrap:wrap; }
+    .friend-row .gap-2{ width:100%; justify-content:flex-end; }
+  }
 </style>
 
 <div class="page-header">
@@ -42,7 +61,7 @@
 
 <div class="card spotlight-card" data-reveal>
   <div class="card-title">Add a Friend</div>
-  <form method="post" style="display:flex; gap: 10px; align-items: flex-start;">
+  <form method="post" class="add-friend-form">
     {% csrf_token %}
     <div class="form-group" style="flex:1; margin-bottom:0;">
       <label for="{{ form.username.id_for_label }}">Username</label>

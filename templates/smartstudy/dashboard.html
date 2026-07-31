@@ -1,6 +1,54 @@
 {% extends 'base/smartstudy_base.html' %}
 {% block title %}Dashboard · NEXA{% endblock %}
 
+{% block extra_head %}
+<style>
+  /* Page-specific responsive + polish additions only —
+     card, stat, stat-grid, spotlight-card, data-reveal, score-bar,
+     score-fill, badge-*, btn-* all come from base.css already. */
+
+  .dash-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem;
+  }
+  @media (max-width:860px){
+    .dash-grid{ grid-template-columns:1fr; }
+  }
+
+  @media (max-width:560px){
+    .stat-grid{ grid-template-columns:repeat(2,1fr) !important; gap:.6rem; }
+    .page-header{ flex-direction:column; align-items:flex-start; gap:.75rem; }
+    .page-header .btn-primary{ width:100%; text-align:center; }
+  }
+
+  .study-chip{
+    background:#1e1e1d;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:9px;
+    padding:8px 14px;
+    font-size:13px;
+    transition:transform .15s ease, border-color .15s ease;
+  }
+  .study-chip:hover{
+    transform:translateY(-2px);
+    border-color:rgba(203,162,63,.45);
+  }
+
+  .course-grade-row{ margin-bottom:.85rem; }
+  .course-grade-row:last-child{ margin-bottom:0; }
+
+  .upcoming-row{
+    margin-bottom:.75rem;
+    padding-bottom:.75rem;
+    border-bottom:1px solid rgba(255,255,255,.05);
+    transition:padding-left .15s ease;
+  }
+  .upcoming-row:last-of-type{ border-bottom:none; margin-bottom:0; padding-bottom:0; }
+  .upcoming-row:hover{ padding-left:4px; }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="page-header">
   <h1 class="page-title">Dashboard</h1>
@@ -9,7 +57,7 @@
 
 {% if burnout_warnings %}
   {% for w in burnout_warnings %}
-    <div class="card" style="border-color: rgba(226,75,74,.4); background: rgba(226,75,74,.08); margin-bottom: 1rem;">
+    <div class="card spotlight-card" data-reveal style="border-color: rgba(226,75,74,.4); background: rgba(226,75,74,.08); margin-bottom: 1rem;">
       <div class="flex-between">
         <div>
           <div class="card-title" style="color:#f09595;">
@@ -24,7 +72,7 @@
 {% endif %}
 
 <!-- Stats -->
-<div class="stat-grid">
+<div class="stat-grid" data-reveal>
   <div class="stat stat-purple">
     <div class="stat-label">Avg Grade</div>
     <div class="stat-value">{{ avg_letter }}</div>
@@ -47,14 +95,14 @@
   </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+<div class="dash-grid">
 
   <!-- Course grades -->
-  <div class="card">
+  <div class="card spotlight-card" data-reveal data-reveal-delay="60">
     <div class="card-title">Course Grades</div>
     {% if course_summaries %}
       {% for s in course_summaries %}
-        <div style="margin-bottom:.85rem;">
+        <div class="course-grade-row">
           <div class="flex-between" style="margin-bottom:4px;">
             <span class="gap-2">
               <span class="color-dot" style="background:{{ s.course.color }};"></span>
@@ -81,11 +129,11 @@
   </div>
 
   <!-- Upcoming assignments -->
-  <div class="card">
+  <div class="card spotlight-card" data-reveal data-reveal-delay="120">
     <div class="card-title">Upcoming Due</div>
     {% if upcoming %}
       {% for a in upcoming %}
-        <div style="margin-bottom:.75rem;padding-bottom:.75rem;border-bottom:1px solid rgba(255,255,255,.05);">
+        <div class="upcoming-row">
           <div class="flex-between">
             <span style="font-size:14px;font-weight:500;">{{ a.title }}</span>
             {% with d=a.days_until_due %}
@@ -112,11 +160,11 @@
 
 <!-- Today's study blocks -->
 {% if today_blocks %}
-<div class="card" style="margin-top:1rem;">
+<div class="card spotlight-card" data-reveal data-reveal-delay="180" style="margin-top:1rem;">
   <div class="card-title">Today's Study Blocks</div>
   <div style="display:flex;flex-wrap:wrap;gap:8px;">
     {% for block in today_blocks %}
-      <div style="background:#1e1e1d;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:8px 14px;font-size:13px;">
+      <div class="study-chip">
         <span class="color-dot" style="background:{{ block.course.color }};"></span>
         &nbsp;<strong>{{ block.course.name }}</strong>
         {% if block.assignment %} – {{ block.assignment.title }}{% endif %}

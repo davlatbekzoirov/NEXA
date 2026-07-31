@@ -1,10 +1,22 @@
 {% extends 'base/smartstudy_base.html' %}
 {% block title %}Add Category · NEXA{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* Page-specific responsive + polish additions only — card,
+     form-group, btn-* come from base.css already. */
+  .form-card{ max-width:480px; }
+  @media (max-width:560px){
+    .form-card{ max-width:100%; }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="page-header">
   <h1 class="page-title">Add Grade Category — {{ course.name }}</h1>
 </div>
-<div class="card" style="max-width:480px;">
+<div class="card form-card spotlight-card" data-reveal>
   <p class="text-muted" style="margin-bottom:1rem;font-size:13px;">
     E.g. "Finals" at 30%, "Homework" at 25%. Weights should sum to 100%.
   </p>

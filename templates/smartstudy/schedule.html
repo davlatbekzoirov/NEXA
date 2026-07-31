@@ -1,17 +1,50 @@
 {% extends 'base/smartstudy_base.html' %}
 {% block title %}Schedule · NEXA{% endblock %}
 
+{% block extra_head %}
+<style>
+  /* Page-specific responsive + polish additions only — card,
+     badge-upcoming, btn-*, color-dot come from base.css already. */
+
+  .schedule-layout{
+    display:grid;
+    grid-template-columns:1fr 280px;
+    gap:1rem;
+    align-items:start;
+  }
+  @media (max-width:900px){
+    .schedule-layout{ grid-template-columns:1fr; }
+    .schedule-prefs{ position:static !important; order:-1; }
+  }
+
+  .day-card{ transition:border-color .15s ease; }
+  .day-card:hover{ border-color:rgba(203,162,63,.3); }
+
+  .block-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:7px 0;
+    border-top:1px solid rgba(255,255,255,.05);
+  }
+  @media (max-width:520px){
+    .block-row{ flex-wrap:wrap; }
+    .block-row .toggle-block{ margin-left:auto; }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="page-header">
   <h1 class="page-title">Study Schedule</h1>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 280px;gap:1rem;align-items:start;">
+<div class="schedule-layout">
 
   <!-- Calendar -->
   <div>
     {% for day, blocks in days %}
-    <div class="card" style="margin-bottom:.75rem;">
+    <div class="card day-card spotlight-card" data-reveal data-reveal-delay="{{ forloop.counter0|add:'30' }}" style="margin-bottom:.75rem;">
       <div class="flex-between" style="margin-bottom:{% if blocks %}8px{% else %}0{% endif %};">
         <div>
           <span style="font-weight:600;font-size:14px;">{{ day|date:"l, M j" }}</span>
@@ -24,7 +57,7 @@
       </div>
 
       {% for block in blocks %}
-      <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid rgba(255,255,255,.05);">
+      <div class="block-row">
         <span class="color-dot" style="background:{{ block.course.color }};flex-shrink:0;"></span>
         <div style="flex:1;">
           <div style="font-size:14px;font-weight:500;">{{ block.course.name }}</div>
@@ -42,7 +75,7 @@
   </div>
 
   <!-- Preferences -->
-  <div class="card" style="position:sticky;top:72px;">
+  <div class="card schedule-prefs spotlight-card" data-reveal data-reveal-delay="60" style="position:sticky;top:72px;">
     <div class="card-title">⚙️ Schedule Preferences</div>
     <form method="post">
       {% csrf_token %}

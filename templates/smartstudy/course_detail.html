@@ -1,6 +1,38 @@
 {% extends 'base/smartstudy_base.html' %}
 {% block title %}{{ course.name }} · NEXA{% endblock %}
 
+{% block extra_head %}
+<style>
+  /* Page-specific responsive + polish additions only — card, stat,
+     table-wrap, badge-*, btn-*, divider come from base.css already. */
+
+  .course-stat-grid{
+    grid-template-columns:repeat(3,1fr);
+  }
+  @media (max-width:640px){
+    .course-stat-grid{ grid-template-columns:repeat(1,1fr) !important; }
+  }
+
+  .course-split{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:1rem;
+  }
+  @media (max-width:900px){
+    .course-split{ grid-template-columns:1fr; }
+  }
+
+  @media (max-width:560px){
+    .page-header{ flex-direction:column; align-items:flex-start; gap:.75rem; }
+    .page-header .gap-2{ flex-wrap:wrap; width:100%; }
+    .page-header .gap-2 a{ flex:1; text-align:center; }
+  }
+
+  .category-card{ transition:border-color .15s ease; }
+  .category-card:hover{ border-color:rgba(203,162,63,.3); }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="page-header">
   <div>
@@ -20,7 +52,7 @@
 </div>
 
 <!-- Grade overview -->
-<div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:1.5rem;">
+<div class="stat-grid course-stat-grid" data-reveal style="margin-bottom:1.5rem;">
   <div class="stat stat-purple">
     <div class="stat-label">Overall Grade</div>
     <div class="stat-value">{{ letter }}</div>
@@ -38,12 +70,12 @@
   </div>
 </div>
 
-<div style="display:grid;grid-template-columns:2fr 1fr;gap:1rem;">
+<div class="course-split">
 
   <!-- Left: categories & assignments -->
   <div>
     {% for cat in categories %}
-    <div class="card" style="margin-bottom:1rem;">
+    <div class="card category-card spotlight-card" data-reveal data-reveal-delay="{{ forloop.counter0|add:'60' }}" style="margin-bottom:1rem;">
       <div class="flex-between" style="margin-bottom:.75rem;">
         <div>
           <span style="font-weight:600;font-size:15px;">{{ cat.name }}</span>
@@ -102,7 +134,7 @@
       {% endif %}
     </div>
     {% empty %}
-      <div class="card">
+      <div class="card spotlight-card" data-reveal>
         <div class="empty">
           <div class="empty-icon">🗂️</div>
           <p>No grade categories yet.<br>
@@ -116,7 +148,7 @@
   <div>
 
     <!-- What-If Calculator -->
-    <div class="card" style="margin-bottom:1rem;">
+    <div class="card spotlight-card" data-reveal data-reveal-delay="80" style="margin-bottom:1rem;">
       <div class="card-title">🧮 What-If Calculator</div>
       <p class="text-muted" style="font-size:13px;margin-bottom:1rem;">Enter hypothetical scores to see your projected grade.</p>
       <form method="post">
@@ -154,7 +186,7 @@
     </div>
 
     <!-- Needed Score -->
-    <div class="card">
+    <div class="card spotlight-card" data-reveal data-reveal-delay="140">
       <div class="card-title">🎯 Needed Score</div>
       <p class="text-muted" style="font-size:13px;margin-bottom:1rem;">What score do you need on the next assignment?</p>
       <form method="post">

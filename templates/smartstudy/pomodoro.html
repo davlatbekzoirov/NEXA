@@ -8,6 +8,38 @@
   .pom-state-running .timer-circle { stroke: #534AB7; }
   .pom-state-break   .timer-circle { stroke: #1D9E75; }
   .pom-state-done    .timer-circle { stroke: #BA7517; }
+
+  /* Page-specific responsive + polish additions only — card,
+     form-group, btn-*, table-wrap, score-bar, spotlight-card,
+     data-reveal come from base.css already. */
+
+  .pomodoro-layout{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem;
+    align-items:start;
+  }
+  @media (max-width:860px){
+    .pomodoro-layout{ grid-template-columns:1fr; }
+  }
+
+  #timerWrap svg{
+    width:200px;
+    height:200px;
+    max-width:100%;
+  }
+  @media (max-width:400px){
+    #timerWrap svg{ width:170px; height:170px; }
+    #timerDisplay{ font-size:34px !important; }
+  }
+
+  .quick-stat{
+    background:#1e1e1d;
+    border-radius:10px;
+    padding:.75rem 1rem;
+    transition:transform .15s ease;
+  }
+  .quick-stat:hover{ transform:translateY(-2px); }
 </style>
 {% endblock %}
 
@@ -16,10 +48,10 @@
   <h1 class="page-title">Pomodoro Timer</h1>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:start;">
+<div class="pomodoro-layout">
 
   <!-- Timer -->
-  <div class="card" style="text-align:center;">
+  <div class="card spotlight-card" data-reveal style="text-align:center;">
     <div id="timerWrap" class="pom-state-idle" style="display:inline-block;position:relative;margin:1.5rem auto;">
       <svg width="200" height="200" viewBox="0 0 200 200">
         <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/>
@@ -34,7 +66,7 @@
       </div>
     </div>
 
-    <div id="timerControls" class="gap-2" style="justify-content:center;margin-bottom:1.25rem;">
+    <div id="timerControls" class="gap-2" style="justify-content:center;margin-bottom:1.25rem;flex-wrap:wrap;">
       <button id="btnStart" class="btn btn-primary" onclick="startTimer()">▶ Start</button>
       <button id="btnPause" class="btn btn-outline" onclick="pauseTimer()" style="display:none;">⏸ Pause</button>
       <button id="btnReset" class="btn btn-outline" onclick="resetTimer()">↺ Reset</button>
@@ -68,14 +100,14 @@
   <!-- Stats & History -->
   <div>
     <!-- Summary -->
-    <div class="card" style="margin-bottom:1rem;">
+    <div class="card spotlight-card" data-reveal data-reveal-delay="60" style="margin-bottom:1rem;">
       <div class="card-title">Focus Stats</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
-        <div style="background:#1e1e1d;border-radius:10px;padding:.75rem 1rem;">
+        <div class="quick-stat">
           <div class="text-muted" style="font-size:11px;margin-bottom:2px;">TOTAL HOURS</div>
           <div style="font-size:24px;font-weight:700;">{{ total_hours }}h</div>
         </div>
-        <div style="background:#1e1e1d;border-radius:10px;padding:.75rem 1rem;">
+        <div class="quick-stat">
           <div class="text-muted" style="font-size:11px;margin-bottom:2px;">SESSIONS</div>
           <div style="font-size:24px;font-weight:700;">{{ total_sessions }}</div>
         </div>
@@ -84,7 +116,7 @@
 
     <!-- By course -->
     {% if by_course %}
-    <div class="card" style="margin-bottom:1rem;">
+    <div class="card spotlight-card" data-reveal data-reveal-delay="100" style="margin-bottom:1rem;">
       <div class="card-title">By Course</div>
       {% for row in by_course %}
       <div style="margin-bottom:.75rem;">
@@ -104,7 +136,7 @@
 
     <!-- Recent -->
     {% if recent %}
-    <div class="card">
+    <div class="card spotlight-card" data-reveal data-reveal-delay="140">
       <div class="card-title">Recent Sessions</div>
       <div class="table-wrap">
         <table>
