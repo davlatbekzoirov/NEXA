@@ -90,3 +90,8 @@ class AnalyticsHelper:
         }
 
 
+# ─── Backwards-compatible module-level aliases (so existing imports like
+#     `from .analytics import get_burnout_warnings, get_study_vs_grade_data` keep
+#     working without touching views.py) ────────────────────────────────────────
+get_burnout_warnings = AnalyticsHelper.get_burnout_warnings
+get_study_vs_grade_data = AnalyticsHelper.get_study_vs_grade_data

@@ -65,3 +65,11 @@ class SocialHelper:
             for p in people
         ]
         return sorted(board, key=lambda x: x['weekly_hours'], reverse=True)
+
+
+# ─── Backwards-compatible module-level aliases (so existing imports like
+#     `from .social import get_leaderboard` keep working without touching views.py) ─
+get_friends = SocialHelper.get_friends
+get_weekly_hours = SocialHelper.get_weekly_hours
+get_streak = SocialHelper.get_streak
+get_leaderboard = SocialHelper.get_leaderboard

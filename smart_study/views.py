@@ -503,3 +503,37 @@ class FriendViews:
             req.status = 'declined'
             req.save()
         return redirect('smart_study:friends')
+
+
+# ─── Backwards-compatible module-level aliases (so urls.py's existing
+#     `views.smart_study`, `views.course_list`, etc. keep working unchanged) ─────
+smart_study = DashboardViews.smart_study
+
+course_list = CourseViews.course_list
+course_create = CourseViews.course_create
+course_detail = CourseViews.course_detail
+course_edit = CourseViews.course_edit
+course_delete = CourseViews.course_delete
+
+category_create = GradeCategoryViews.category_create
+category_delete = GradeCategoryViews.category_delete
+
+assignment_create = AssignmentViews.assignment_create
+assignment_edit = AssignmentViews.assignment_edit
+assignment_delete = AssignmentViews.assignment_delete
+
+schedule_view = ScheduleViews.schedule_view
+toggle_block = ScheduleViews.toggle_block
+
+pomodoro_view = PomodoroViews.pomodoro_view
+pomodoro_log = PomodoroViews.pomodoro_log
+
+study_analytics = AnalyticsViews.study_analytics
+
+group_list = GroupViews.group_list
+group_create = GroupViews.group_create
+group_detail = GroupViews.group_detail
+group_leave = GroupViews.group_leave
+
+friends_view = FriendViews.friends_view
+friend_request_respond = FriendViews.friend_request_respond
