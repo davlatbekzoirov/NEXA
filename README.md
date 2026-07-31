@@ -190,7 +190,3 @@ From a document's detail page in **UniTracker**, you can generate a time-limited
 ## RoomieRatio
 
 Part of **CampusCribs**, RoomieRatio helps students living with roommates track shared expenses and split costs by a configurable ratio. New users without a household see an onboarding prompt; once part of a household, the hub view becomes the central place to manage shared costs.
-
-## License
-
-Add your license of choice here.
