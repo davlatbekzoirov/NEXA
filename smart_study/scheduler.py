@@ -77,8 +77,3 @@ class StudyScheduler:
         )
 
 
-# ─── Backwards-compatible module-level aliases (so existing imports like
-#     `from .scheduler import generate_study_blocks, get_schedule_for_user` keep
-#     working without touching views.py) ────────────────────────────────────────
-generate_study_blocks = StudyScheduler.generate_study_blocks
-get_schedule_for_user = StudyScheduler.get_schedule_for_user

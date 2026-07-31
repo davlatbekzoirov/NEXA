@@ -134,10 +134,3 @@ class GradeCalculator:
             'max_score': float(next_a.max_score),
         }
 
-
-# ─── Backwards-compatible module-level aliases (so existing imports like
-#     `from .grades import letter_grade, what_if_grade, needed_score` keep working
-#     without touching views.py) ────────────────────────────────────────────────
-letter_grade = GradeCalculator.letter_grade
-what_if_grade = GradeCalculator.what_if_grade
-needed_score = GradeCalculator.needed_score
