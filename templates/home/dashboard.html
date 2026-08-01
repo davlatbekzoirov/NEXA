@@ -8,13 +8,13 @@
 
 <div class="dash-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;">
 
-  <!-- UniTracker -->
-  <a href="{% url 'universities:main_uni' %}" class="card spotlight-card" data-reveal style="text-decoration:none;display:block;">
+  <!-- ===================== UniTracker: Stats + Analytics ===================== -->
+  <div class="card spotlight-card" data-reveal>
     <div class="flex-between" style="margin-bottom:.75rem;">
       <span class="card-title" style="margin:0;">🎓 UniTracker</span>
-      <span class="badge badge-upcoming">Open →</span>
+      <a href="{% url 'universities:main_uni' %}" class="badge badge-upcoming" style="text-decoration:none;">Open →</a>
     </div>
-    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);gap:.6rem;">
+    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);gap:.5rem;">
       <div class="stat stat-purple">
         <div class="stat-label">Applications</div>
         <div class="stat-value">{{ uni_total|default:"—" }}</div>
@@ -28,23 +28,41 @@
         <div class="stat-value">{{ uni_accepted|default:"—" }}</div>
       </div>
     </div>
+
+    {% if uni_timeline_labels %}
+      <div style="margin-top:1rem;">
+        <div style="font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;">Analytics</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+          <div>
+            <div class="text-muted" style="font-size:12px;margin-bottom:4px;">Deadlines timeline</div>
+            <div style="position:relative;height:130px;"><canvas id="homeUniTimeline"></canvas></div>
+          </div>
+          <div>
+            <div class="text-muted" style="font-size:12px;margin-bottom:4px;">By type</div>
+            <div style="position:relative;height:130px;"><canvas id="homeUniType"></canvas></div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
     {% if uni_next %}
       <p class="text-muted" style="margin-top:.75rem;font-size:13px;">
-        Next deadline: <strong style="color:#e8e6f0;">{{ uni_next.name }}</strong> in {{ uni_next.days_until_deadline }} days
+        Next deadline: <strong style="color:#e8e6f0;">{{ uni_next.name }}</strong>
       </p>
     {% endif %}
-  </a>
+  </div>
 
-  <!-- SmartStudy -->
-  <a href="{% url 'smart_study:smart_study' %}" class="card spotlight-card" data-reveal data-reveal-delay="60" style="text-decoration:none;display:block;">
+  <!-- ===================== SmartStudy: Stats + Course Grades ===================== -->
+  <div class="card spotlight-card" data-reveal data-reveal-delay="60">
     <div class="flex-between" style="margin-bottom:.75rem;">
       <span class="card-title" style="margin:0;">📚 SmartStudy</span>
-      <span class="badge badge-upcoming">Open →</span>
+      <a href="{% url 'smart_study:smart_study' %}" class="badge badge-upcoming" style="text-decoration:none;">Open →</a>
     </div>
-    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);gap:.6rem;">
+    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);gap:.5rem;">
       <div class="stat stat-purple">
         <div class="stat-label">Avg Grade</div>
-        <div class="stat-value">{% if study_avg_grade %}{{ study_avg_grade }}%{% else %}—{% endif %}</div>
+        <div class="stat-value">{{ study_avg_letter|default:"—" }}</div>
+        <div class="stat-sub">{% if study_avg_grade %}{{ study_avg_grade }}%{% endif %}</div>
       </div>
       <div class="stat stat-teal">
         <div class="stat-label">Courses</div>
@@ -55,20 +73,39 @@
         <div class="stat-value">{{ study_pomodoro_count|default:"—" }}</div>
       </div>
     </div>
-    {% if study_next_assignment %}
-      <p class="text-muted" style="margin-top:.75rem;font-size:13px;">
-        Due next: <strong style="color:#e8e6f0;">{{ study_next_assignment.title }}</strong>
-      </p>
-    {% endif %}
-  </a>
 
-  <!-- CampusPulse -->
-  <a href="{% url 'extracurricular:campuspulse' %}" class="card spotlight-card" data-reveal data-reveal-delay="120" style="text-decoration:none;display:block;">
+    {% if study_course_rows %}
+      <div style="margin-top:1rem;">
+        <div style="font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;">Course Grades</div>
+        {% for s in study_course_rows %}
+          <div style="margin-bottom:.6rem;">
+            <div class="flex-between" style="margin-bottom:3px;">
+              <span class="gap-2" style="font-size:13px;">
+                <span class="color-dot" style="background:{{ s.color }};"></span>
+                {{ s.name }}
+              </span>
+              <span style="font-size:12px;color:#aaa;">
+                {% if s.grade %}{{ s.grade }}% &nbsp;<strong style="color:#e8e6f0;">{{ s.letter }}</strong>{% else %}—{% endif %}
+              </span>
+            </div>
+            {% if s.grade %}
+              <div class="score-bar">
+                <div class="score-fill {% if s.grade >= 80 %}score-fill-green{% elif s.grade >= 70 %}score-fill-blue{% endif %}" style="width:{{ s.grade }}%;"></div>
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- ===================== CampusPulse: Calendar feed + skill-gap ===================== -->
+  <div class="card spotlight-card" data-reveal data-reveal-delay="120">
     <div class="flex-between" style="margin-bottom:.75rem;">
       <span class="card-title" style="margin:0;">🌱 CampusPulse</span>
-      <span class="badge badge-upcoming">Open →</span>
+      <a href="{% url 'extracurricular:campuspulse' %}" class="badge badge-upcoming" style="text-decoration:none;">Open →</a>
     </div>
-    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);gap:.6rem;">
+    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);gap:.5rem;">
       <div class="stat stat-purple">
         <div class="stat-label">Clubs</div>
         <div class="stat-value">{{ pulse_total_clubs|default:"—" }}</div>
@@ -82,31 +119,105 @@
         <div class="stat-value">{{ pulse_total_impacts|default:"—" }}</div>
       </div>
     </div>
-  </a>
 
-  <!-- CampusCribs (Budget + Housing + RoomieRatio) -->
+    <div style="margin-top:1rem;">
+      <div class="text-muted" style="font-size:12px;margin-bottom:6px;">Calendar feed</div>
+      {% if pulse_feed_url %}
+        <div class="ical-box" style="font-size:11px;word-break:break-all;background:#1e1e1d;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 10px;">{{ pulse_feed_url }}</div>
+      {% else %}
+        <div class="ical-box" style="font-size:11px;color:#555;background:#1e1e1d;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 10px;">Subscribe in Apple or Google Calendar using this URL:</div>
+      {% endif %}
+    </div>
+
+    <div style="margin-top:1rem;">
+      <div class="text-muted" style="font-size:12px;margin-bottom:6px;">Leadership Balance Index</div>
+      <div class="insights-stat-pair" style="display:flex;gap:1.5rem;margin-bottom:.5rem;">
+        <div class="insights-stat">
+          <div class="insights-stat-label" style="font-size:11px;color:#888;">Exec roles</div>
+          <div class="insights-stat-value insights-stat-value--lead" style="font-size:20px;font-weight:700;">{{ pulse_leadership_count|default:"—" }}</div>
+        </div>
+        <div class="insights-stat">
+          <div class="insights-stat-label" style="font-size:11px;color:#888;">General member</div>
+          <div class="insights-stat-value insights-stat-value--member" style="font-size:20px;font-weight:700;">{{ pulse_member_count|default:"—" }}</div>
+        </div>
+      </div>
+      {% if pulse_leadership_feedback %}
+        <div class="insights-reco" style="font-size:13px;">
+          <span class="insights-reco-label text-muted">Recommendation: </span>{{ pulse_leadership_feedback }}
+        </div>
+      {% endif %}
+    </div>
+
+    <div style="margin-top:1rem;">
+      <div class="text-muted" style="font-size:12px;margin-bottom:6px;">Target path skill-gap analysis</div>
+      {% if path_analysis %}
+        {% for path, data in path_analysis.items %}
+          <div class="path-row" style="margin-bottom:.6rem;">
+            <div class="path-row-header flex-between" style="font-size:13px;">
+              <span>{{ path }}</span>
+              <span class="path-fit">{{ data.match_pct }}% fit</span>
+            </div>
+            <div class="score-bar" style="margin:6px 0;">
+              <div class="score-fill {% if data.match_pct > 70 %}score-fill-green{% elif data.match_pct > 40 %}score-fill-blue{% endif %}" style="width:{{ data.match_pct }}%;"></div>
+            </div>
+            <div class="path-gaps" style="font-size:12px;">
+              {% if data.missing %}
+                <span class="text-muted">Gaps to build:</span>
+                {% for skill in data.missing %}<span class="path-gap-tag">{{ skill }}</span>{% endfor %}
+              {% else %}
+                <span class="path-complete">✓ Core targets logged — excellent portfolio.</span>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-muted" style="font-size:13px;">No path analysis logged yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ===================== CampusCribs: Stats + Recent Running History ===================== -->
   <div class="card spotlight-card" data-reveal data-reveal-delay="180">
     <div class="flex-between" style="margin-bottom:.75rem;">
       <span class="card-title" style="margin:0;">💸 CampusCribs</span>
       {% if budget_noodle_alert %}<span class="badge badge-urgent">🍜 Alert</span>{% endif %}
     </div>
-    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);gap:.6rem;">
+    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);gap:.5rem;">
       <div class="stat {% if budget_noodle_alert %}stat-amber{% else %}stat-purple{% endif %}">
         <div class="stat-label">Net Balance</div>
         <div class="stat-value">{% if budget_balance is not None %}${{ budget_balance }}{% else %}—{% endif %}</div>
-        <div class="stat-sub">{% if budget_runway_days is not None %}{{ budget_runway_days }}d runway{% endif %}</div>
       </div>
       <div class="stat stat-teal">
-        <div class="stat-label">Properties</div>
-        <div class="stat-value">{{ housing_total|default:"—" }}</div>
-        <div class="stat-sub">{% if housing_signed %}{{ housing_signed }} signed{% endif %}</div>
+        <div class="stat-label">Runway</div>
+        <div class="stat-value">{% if budget_runway_days is not None %}{{ budget_runway_days }}d{% else %}—{% endif %}</div>
       </div>
       <div class="stat stat-blue">
-        <div class="stat-label">Household</div>
-        <div class="stat-value">{{ household_member_count|default:"—" }}</div>
-        <div class="stat-sub">{{ household_name|default:"not set up" }}</div>
+        <div class="stat-label">Properties</div>
+        <div class="stat-value">{{ housing_total|default:"—" }}</div>
       </div>
     </div>
+
+    {% if budget_entries %}
+      <div style="margin-top:1rem;">
+        <div style="font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;">Recent Running History</div>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              {% for entry in budget_entries %}
+                <tr>
+                  <td style="font-size:13px;">{{ entry.title }}</td>
+                  <td class="text-muted" style="font-size:12px;">{{ entry.category.name|default:"Unassigned" }}</td>
+                  <td style="font-weight:600;font-size:13px;color:{% if entry.type == 'INCOME' %}#1D9E75{% else %}#E24B4A{% endif %};">
+                    {% if entry.type == 'INCOME' %}+{% else %}-{% endif %}${{ entry.amount }}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {% endif %}
+
     <div style="display:flex;gap:8px;margin-top:.75rem;flex-wrap:wrap;">
       <a href="{% url 'budget:budget' %}" class="btn btn-outline btn-sm">Ledger</a>
       <a href="{% url 'housing:pipeline' %}" class="btn btn-outline btn-sm">Housing</a>
@@ -134,4 +245,63 @@
     .dash-grid{ grid-template-columns:1fr !important; }
   }
 </style>
+
+{% if uni_timeline_labels %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+(function () {
+  var textColor = '#888780';
+  var gridColor = 'rgba(255,255,255,0.06)';
+  Chart.defaults.color = textColor;
+  Chart.defaults.font.size = 11;
+
+  var labels = {{ uni_timeline_labels|safe }};
+  var days = {{ uni_timeline_days|safe }};
+  var statusCounts = {{ uni_status_counts|safe }};
+
+  new Chart(document.getElementById('homeUniTimeline'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: days,
+        backgroundColor: days.map(function (d) {
+          return d < 0 ? 'rgba(226,75,74,0.75)' : d < 30 ? 'rgba(239,159,39,0.75)' : 'rgba(127,119,221,0.75)';
+        }),
+        borderRadius: 4,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: gridColor } },
+        y: { grid: { display: false }, ticks: { font: { size: 10 } } }
+      }
+    }
+  });
+
+  new Chart(document.getElementById('homeUniType'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Reach', 'Match', 'Safety'],
+      datasets: [{
+        data: statusCounts,
+        backgroundColor: ['rgba(127,119,221,0.85)', 'rgba(29,158,117,0.85)', 'rgba(186,117,23,0.85)'],
+        borderWidth: 0,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '68%',
+      plugins: { legend: { display: false } }
+    }
+  });
+})();
+</script>
+{% endif %}
 {% endblock %}
