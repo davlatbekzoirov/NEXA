@@ -6,35 +6,132 @@
   <h1 class="page-title">Welcome back, {{ request.user.username }}</h1>
 </div>
 
-<div class="stat-grid" data-reveal style="grid-template-columns:repeat(4,1fr);">
-  <a href="{% url 'universities:main_uni' %}" class="card spotlight-card" style="text-decoration:none;">
-    <div class="card-title">UniTracker</div>
-    <p class="text-muted">Applications, scholarships &amp; deadlines</p>
+<div class="dash-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;">
+
+  <!-- UniTracker -->
+  <a href="{% url 'universities:main_uni' %}" class="card spotlight-card" data-reveal style="text-decoration:none;display:block;">
+    <div class="flex-between" style="margin-bottom:.75rem;">
+      <span class="card-title" style="margin:0;">🎓 UniTracker</span>
+      <span class="badge badge-upcoming">Open →</span>
+    </div>
+    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);gap:.6rem;">
+      <div class="stat stat-purple">
+        <div class="stat-label">Applications</div>
+        <div class="stat-value">{{ uni_total|default:"—" }}</div>
+      </div>
+      <div class="stat stat-blue">
+        <div class="stat-label">Submitted</div>
+        <div class="stat-value">{{ uni_submitted|default:"—" }}</div>
+      </div>
+      <div class="stat" style="background:linear-gradient(135deg,#639922,#3B6D11);">
+        <div class="stat-label">Accepted</div>
+        <div class="stat-value">{{ uni_accepted|default:"—" }}</div>
+      </div>
+    </div>
+    {% if uni_next %}
+      <p class="text-muted" style="margin-top:.75rem;font-size:13px;">
+        Next deadline: <strong style="color:#e8e6f0;">{{ uni_next.name }}</strong> in {{ uni_next.days_until_deadline }} days
+      </p>
+    {% endif %}
   </a>
-  <a href="{% url 'smart_study:smart_study' %}" class="card spotlight-card" style="text-decoration:none;">
-    <div class="card-title">SmartStudy</div>
-    <p class="text-muted">Courses, schedule &amp; grades</p>
+
+  <!-- SmartStudy -->
+  <a href="{% url 'smart_study:smart_study' %}" class="card spotlight-card" data-reveal data-reveal-delay="60" style="text-decoration:none;display:block;">
+    <div class="flex-between" style="margin-bottom:.75rem;">
+      <span class="card-title" style="margin:0;">📚 SmartStudy</span>
+      <span class="badge badge-upcoming">Open →</span>
+    </div>
+    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);gap:.6rem;">
+      <div class="stat stat-purple">
+        <div class="stat-label">Avg Grade</div>
+        <div class="stat-value">{% if study_avg_grade %}{{ study_avg_grade }}%{% else %}—{% endif %}</div>
+      </div>
+      <div class="stat stat-teal">
+        <div class="stat-label">Courses</div>
+        <div class="stat-value">{{ study_total_courses|default:"—" }}</div>
+      </div>
+      <div class="stat stat-amber">
+        <div class="stat-label">Pomodoros</div>
+        <div class="stat-value">{{ study_pomodoro_count|default:"—" }}</div>
+      </div>
+    </div>
+    {% if study_next_assignment %}
+      <p class="text-muted" style="margin-top:.75rem;font-size:13px;">
+        Due next: <strong style="color:#e8e6f0;">{{ study_next_assignment.title }}</strong>
+      </p>
+    {% endif %}
   </a>
-  <a href="{% url 'extracurricular:campuspulse' %}" class="card spotlight-card" style="text-decoration:none;">
-    <div class="card-title">CampusPulse</div>
-    <p class="text-muted">Clubs, volunteering &amp; impact</p>
+
+  <!-- CampusPulse -->
+  <a href="{% url 'extracurricular:campuspulse' %}" class="card spotlight-card" data-reveal data-reveal-delay="120" style="text-decoration:none;display:block;">
+    <div class="flex-between" style="margin-bottom:.75rem;">
+      <span class="card-title" style="margin:0;">🌱 CampusPulse</span>
+      <span class="badge badge-upcoming">Open →</span>
+    </div>
+    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);gap:.6rem;">
+      <div class="stat stat-purple">
+        <div class="stat-label">Clubs</div>
+        <div class="stat-value">{{ pulse_total_clubs|default:"—" }}</div>
+      </div>
+      <div class="stat stat-teal">
+        <div class="stat-label">Volunteer Hrs</div>
+        <div class="stat-value">{{ pulse_volunteer_hours|default:"—" }}</div>
+      </div>
+      <div class="stat stat-blue">
+        <div class="stat-label">Impacts</div>
+        <div class="stat-value">{{ pulse_total_impacts|default:"—" }}</div>
+      </div>
+    </div>
   </a>
-  <a href="{% url 'budget:budget' %}" class="card spotlight-card" style="text-decoration:none;">
-    <div class="card-title">CampusCribs</div>
-    <p class="text-muted">Ledger &amp; housing tracker</p>
-  </a>
+
+  <!-- CampusCribs (Budget + Housing + RoomieRatio) -->
+  <div class="card spotlight-card" data-reveal data-reveal-delay="180">
+    <div class="flex-between" style="margin-bottom:.75rem;">
+      <span class="card-title" style="margin:0;">💸 CampusCribs</span>
+      {% if budget_noodle_alert %}<span class="badge badge-urgent">🍜 Alert</span>{% endif %}
+    </div>
+    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);gap:.6rem;">
+      <div class="stat {% if budget_noodle_alert %}stat-amber{% else %}stat-purple{% endif %}">
+        <div class="stat-label">Net Balance</div>
+        <div class="stat-value">{% if budget_balance is not None %}${{ budget_balance }}{% else %}—{% endif %}</div>
+        <div class="stat-sub">{% if budget_runway_days is not None %}{{ budget_runway_days }}d runway{% endif %}</div>
+      </div>
+      <div class="stat stat-teal">
+        <div class="stat-label">Properties</div>
+        <div class="stat-value">{{ housing_total|default:"—" }}</div>
+        <div class="stat-sub">{% if housing_signed %}{{ housing_signed }} signed{% endif %}</div>
+      </div>
+      <div class="stat stat-blue">
+        <div class="stat-label">Household</div>
+        <div class="stat-value">{{ household_member_count|default:"—" }}</div>
+        <div class="stat-sub">{{ household_name|default:"not set up" }}</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:.75rem;flex-wrap:wrap;">
+      <a href="{% url 'budget:budget' %}" class="btn btn-outline btn-sm">Ledger</a>
+      <a href="{% url 'housing:pipeline' %}" class="btn btn-outline btn-sm">Housing</a>
+      <a href="{% url 'roomieratio:hub' %}" class="btn btn-outline btn-sm">RoomieRatio</a>
+    </div>
+  </div>
+
 </div>
 
-<div class="form-row" style="margin-top:2rem;">
-  <div class="card spotlight-card" data-reveal data-reveal-delay="80">
+<div class="form-row" style="margin-top:1.5rem;">
+  <div class="card spotlight-card" data-reveal data-reveal-delay="220">
     <h3 class="card-title">Friends</h3>
     <p class="text-muted" style="margin-bottom:1rem;">See what your friends are up to and stay connected.</p>
     <a href="{% url 'smart_study:friends' %}" class="btn btn-outline">Open Friends</a>
   </div>
-  <div class="card spotlight-card" data-reveal data-reveal-delay="140">
+  <div class="card spotlight-card" data-reveal data-reveal-delay="260">
     <h3 class="card-title">Groups</h3>
     <p class="text-muted" style="margin-bottom:1rem;">Jump back into your study groups.</p>
     <a href="{% url 'smart_study:group_list' %}" class="btn btn-outline">Open Groups</a>
   </div>
 </div>
+
+<style>
+  @media (max-width:860px){
+    .dash-grid{ grid-template-columns:1fr !important; }
+  }
+</style>
 {% endblock %}
