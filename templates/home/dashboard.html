@@ -1,0 +1,40 @@
+{% extends 'base/base.html' %}
+{% block title %}Dashboard · NEXA{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">Welcome back, {{ request.user.username }}</h1>
+</div>
+
+<div class="stat-grid" data-reveal style="grid-template-columns:repeat(4,1fr);">
+  <a href="{% url 'universities:main_uni' %}" class="card spotlight-card" style="text-decoration:none;">
+    <div class="card-title">UniTracker</div>
+    <p class="text-muted">Applications, scholarships &amp; deadlines</p>
+  </a>
+  <a href="{% url 'smart_study:smart_study' %}" class="card spotlight-card" style="text-decoration:none;">
+    <div class="card-title">SmartStudy</div>
+    <p class="text-muted">Courses, schedule &amp; grades</p>
+  </a>
+  <a href="{% url 'extracurricular:campuspulse' %}" class="card spotlight-card" style="text-decoration:none;">
+    <div class="card-title">CampusPulse</div>
+    <p class="text-muted">Clubs, volunteering &amp; impact</p>
+  </a>
+  <a href="{% url 'budget:budget' %}" class="card spotlight-card" style="text-decoration:none;">
+    <div class="card-title">CampusCribs</div>
+    <p class="text-muted">Ledger &amp; housing tracker</p>
+  </a>
+</div>
+
+<div class="form-row" style="margin-top:2rem;">
+  <div class="card spotlight-card" data-reveal data-reveal-delay="80">
+    <h3 class="card-title">Friends</h3>
+    <p class="text-muted" style="margin-bottom:1rem;">See what your friends are up to and stay connected.</p>
+    <a href="{% url 'smart_study:friends' %}" class="btn btn-outline">Open Friends</a>
+  </div>
+  <div class="card spotlight-card" data-reveal data-reveal-delay="140">
+    <h3 class="card-title">Groups</h3>
+    <p class="text-muted" style="margin-bottom:1rem;">Jump back into your study groups.</p>
+    <a href="{% url 'smart_study:group_list' %}" class="btn btn-outline">Open Groups</a>
+  </div>
+</div>
+{% endblock %}

@@ -17,36 +17,36 @@ from .utils import send_email_change_code
 class RegisterView(View):
     def get(self, request):
         if request.user.is_authenticated:
-            return redirect('home:home')
+            return redirect('home:dashboard')
         form = RegisterForm()
         return render(request, 'accounts/auth.html', {'form': form, 'mode': 'register'})
 
     def post(self, request):
         if request.user.is_authenticated:
-            return redirect('home:home')
+            return redirect('home:dashboard')
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
             messages.success(request, f'Welcome, {user.username}!')
-            return redirect('home:home')
+            return redirect('home:dashboard')
         return render(request, 'accounts/auth.html', {'form': form, 'mode': 'register'})
 
 
 class LoginView(View):
     def get(self, request):
         if request.user.is_authenticated:
-            return redirect('home:home')
+            return redirect('home:dashboard')
         form = AuthenticationForm(request)
         return render(request, 'accounts/auth.html', {'form': form, 'mode': 'login'})
 
     def post(self, request):
         if request.user.is_authenticated:
-            return redirect('home:home')
+            return redirect('home:dashboard')
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             login(request, form.get_user())
-            return redirect(request.GET.get('next', 'home:home'))
+            return redirect(request.GET.get('next', 'home:dashboard'))
         return render(request, 'accounts/auth.html', {'form': form, 'mode': 'login'})
 
 

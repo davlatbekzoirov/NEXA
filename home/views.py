@@ -1,12 +1,19 @@
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render
 
 
 def home(request):
+    if request.user.is_authenticated:
+        return redirect("home:dashboard")
     return render(request, "home/index.html")
 
+
+@login_required
+def dashboard(request):
+    return render(request, "home/dashboard.html")
 
 def about(request):
     return render(request, "home/about.html")
