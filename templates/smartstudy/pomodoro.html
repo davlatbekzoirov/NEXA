@@ -66,7 +66,7 @@
       </div>
     </div>
 
-    <div id="timerControls" class="gap-2" style="justify-content:center;margin-bottom:1.25rem;flex-wrap:wrap;">
+    <div id="timerControls" style="display:flex;justify-content:center;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;">
       <button id="btnStart" class="btn btn-primary" onclick="startTimer()">▶ Start</button>
       <button id="btnPause" class="btn btn-outline" onclick="pauseTimer()" style="display:none;">⏸ Pause</button>
       <button id="btnReset" class="btn btn-outline" onclick="resetTimer()">↺ Reset</button>
@@ -84,8 +84,8 @@
         <label>Course</label>
         <select id="logCourse">
           <option value="">— None —</option>
-          {% for s in by_course %}
-          <option value="">{{ s.course__name }}</option>
+          {% for course in form.fields.course.queryset %}
+          <option value="{{ course.pk }}">{{ course.name }}</option>
           {% endfor %}
         </select>
       </div>
@@ -166,12 +166,6 @@
 const WORK_MIN = {{ prefs.pomodoro_work_minutes }};
 const BREAK_MIN = {{ prefs.pomodoro_break_minutes }};
 const CSRF = '{{ csrf_token }}';
-
-// Build course map from server
-const COURSES = [
-  {% for row in by_course %}
-  {% endfor %}
-];
 
 let totalSec, remainSec, timerInt, isRunning = false, isBreak = false, sessionsDone = 0;
 const CIRCUMFERENCE = 2 * Math.PI * 88;
@@ -278,10 +272,5 @@ async function logSession() {
 
 // Init
 resetTimer();
-// Populate course dropdown from actual courses
-const courseSelect = document.getElementById('logCourse');
-{% for row in by_course %}
-// (already rendered server-side)
-{% endfor %}
 </script>
 {% endblock %}
